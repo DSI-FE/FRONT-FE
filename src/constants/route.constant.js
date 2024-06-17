@@ -1,0 +1,17 @@
+export const ROOT = '/'
+export const APP_PREFIX_PATH = '/app'
+export const AUTH_PREFIX_PATH = '/auth'
+export const DIRECTORY_PREFIX_PATH = '/directory'
+export const ATTENDANCE_PREFIX_PATH = '/attendance'
+export const ADMINISTRATION_PREFIX_PATH = '/administration'
+export const REQUEST_PREFIX_PATH = '/request'
+export const RESERVATION_PREFIX_PATH = '/reservation'
+export const TRANSPORT_PREFIX_PATH = '/transport'
+
+
+export const OUR_JOB_PREFIX_PATH = '/our-job'
+export const DOWNLOADABLE_PREFIX_PATH = '/downloadable'
+export const INSTITUTIONAL_IDENTITY_PREFIX_PATH = '/institutional-identity'
+export const MEDIA_PREFIX_PATH = '/media'
+export const PAGES_PREFIX_PATH = '/pages'
+export const DOCS_PREFIX_PATH = '/docs'
