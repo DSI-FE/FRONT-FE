@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Upload, Input, Button, Drawer, Radio, Switcher } from 'components/ui';
-import { apiCreateCliente } from 'services/ClienteService';
+import { apiCreateProveedor } from 'services/ProveedorService';
 
-const ClienteDrawer = ({ isOpen, eventSent, setIsOpen, drawerOpen, formType }) => {
-    const [nombres, setNombres] = useState('');
-    const [apellidos, setApellido] = useState('');
-    const [selectedCliente, setSelectedCliente] = useState(null);
+const ProveedorDrawer = ({ isOpen, eventSent, setIsOpen, drawerOpen, formType }) => {
+    const [nombre, setNombre] = useState('');
+    const [selectedProveedor, setSelectedProveedor] = useState(null);
 
     useEffect(() => {
         setIsOpen(drawerOpen);
-        if (formType === "DataCliente" && eventSent) {
-            setNombres(eventSent?.extendedProps?.nombres || '');
-            setApellido(eventSent?.extendedProps?.apellidos || '');
-            
+        if (formType === "DataProveedor" && eventSent) {
+            setNombre(eventSent?.extendedProps?.nombres || '');
+                        
         } else {
-            setNombres('');
-            setApellido('');
+            setNombre('');
         }
     }, [drawerOpen, formType]);
 
@@ -106,7 +103,7 @@ const ClienteDrawer = ({ isOpen, eventSent, setIsOpen, drawerOpen, formType }) =
     //     clearFields();
     // };
 
-    const title = formType === "DataCliente" ? "Editar registro del cliente" : "Nuevo registro de cliente";
+    const title = formType === "DataProveedor" ? "Editar registro del proveedor" : "Nuevo registro de proveedor";
 
     return (
         <Drawer
@@ -196,4 +193,4 @@ const ClienteDrawer = ({ isOpen, eventSent, setIsOpen, drawerOpen, formType }) =
     )
 }
 
-export default ClienteDrawer;
+export default ProveedorDrawer;

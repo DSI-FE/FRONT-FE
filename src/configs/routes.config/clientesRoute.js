@@ -1,6 +1,6 @@
 import React from "react";
 
-const transportRoute = [
+const clienteRoute = [
 
     {
         key: 'clientes',
@@ -10,4 +10,4 @@ const transportRoute = [
     }
 ]
 
-export default transportRoute;
+export default clienteRoute;
