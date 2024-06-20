@@ -8,9 +8,9 @@ import { apiGetClientes } from 'services/ClienteService';
 import ClienteDrawer from './ClienteDrawer';
 
 const ClienteList = () => {
-
   const [clientesList, setClientesList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedCliente, setSelectedCliente] = useState(null);
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -20,16 +20,17 @@ const ClienteList = () => {
     fetchClientes();
   }, []);
 
-
-
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
     const onEdit = () => {
-    }
+      setSelectedCliente(row);
+      setIsDrawerOpen(true);
+    };
 
     const onDelete = () => {
-    }
+      // Aquí puedes manejar la eliminación del cliente
+    };
 
     return (
       <div className='flex justify-center text-center space-x-4'>
@@ -38,7 +39,7 @@ const ClienteList = () => {
           size="xs"
           variant="solid"
           icon={<HiEye />}
-          onClick={onEdit}
+          onClick={() => console.log(row)}
         />
         <Button
           title='Editar datos'
@@ -47,7 +48,7 @@ const ClienteList = () => {
           icon={<HiPencil />}
           onClick={onEdit}
         />
-        <Button className='bg-red-500 hover.bg-red-400 active.bg-red-700'
+        <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
           title='Eliminar datos'
           size="xs"
           variant="solid"
@@ -56,7 +57,7 @@ const ClienteList = () => {
         />
       </div>
     );
-  }
+  };
 
   const columns = [
     {
@@ -85,15 +86,16 @@ const ClienteList = () => {
       cellClassName: 'text-center',
     }
   ];
-  
-    const openDrawer = () => {
-      setIsDrawerOpen(true);
-    };
+
+  const openDrawer = () => {
+    setSelectedCliente(null); // Limpiamos el cliente seleccionado si es un nuevo registro
+    setIsDrawerOpen(true);
+  };
 
   return (
     <>
       <div className="flex justify-between items-center">
-      <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}> Lista de clientes</h2>
+        <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>Lista de clientes</h2>
         <Button
           onClick={openDrawer}
           icon={<CgAdd />}
@@ -107,7 +109,7 @@ const ClienteList = () => {
       <div>
         <BaseDataTable columns={columns} reqUrl={'/clientes/listaclientes'} />
       </div>
-      <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} />
+      <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} cliente={selectedCliente} />
     </>
   );
 };
