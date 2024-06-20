@@ -5,16 +5,7 @@ const title = 'Directorio';
 
 const directoryRoute =
 [
-    {
-        key: 'directory',
-        path: `${DIRECTORY_PREFIX_PATH}`,
-        component: React.lazy(() => import('views/directory')),
-        authority: [],
-        base:{
-            title:title,
-            subtitle:'Mis Directorios',
-        }
-    },
+
     {
         key: 'directory.employees',
         path: `${DIRECTORY_PREFIX_PATH}/employees`,

@@ -7,6 +7,8 @@ import ourJobRoute from './ourJobRoute'
 
 import magazineRoute from './magazineRoute'
 
+import clientesRoute from './clientesRoute';
+
 export const publicRoutes = [ ...authRoute ]
 
 export const protectedRoutes = [
@@ -15,5 +17,6 @@ export const protectedRoutes = [
     ...administrationRoute,
     ...magazineRoute,
     ...ourJobRoute,
+    ...clientesRoute
 
 ]

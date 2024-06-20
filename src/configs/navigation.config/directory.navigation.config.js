@@ -25,15 +25,7 @@ const directoryNavigationConfig = [
 						type: NAV_ITEM_TYPE_ITEM,
 						authority: [ADMIN, USER],
 						subMenu: []
-					},
-					// {
-					// 	key: 'directory.directories',
-					// 	path: `${DIRECTORY_PREFIX_PATH}/`,
-					// 	translateKey: 'Mis Directorios',
-					// 	type: NAV_ITEM_TYPE_ITEM,
-					// 	authority: [ADMIN, USER],
-					// 	subMenu: []
-					// },
+					}
 				]
 			},
         ]

@@ -1,12 +1,14 @@
 import { NAV_ITEM_TYPE_COLLAPSE, NAV_ITEM_TYPE_ITEM} from 'constants/navigation.constant'
 
 import directoryNavigationConfig from './directory.navigation.config'
+import clientesNavigationConfig from './clientes.navigation.config'
 
 import Dsi from 'views/dsi';
 
 const navigationConfig = [
     
     ...directoryNavigationConfig,
+    ...clientesNavigationConfig,
  
     {
         key: 'administrationCollapse',
@@ -29,7 +31,7 @@ const navigationConfig = [
             {
                 key: 'administration.organizational-units',
                 path: 'administration/organizational-units',
-                title: 'Unidades Organizacionales',
+                title: 'Puestos de trabajo',
                 translateKey: 'nav.administration.organizational-units',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [],
@@ -38,7 +40,7 @@ const navigationConfig = [
             {
                 key: 'administration.functional-positions',
                 path: 'administration/functional-positions',
-                title: 'Cargos Funcionales',
+                title: 'Cargos asignados',
                 translateKey: 'nav.administration.functional-positions',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [],
@@ -47,20 +49,6 @@ const navigationConfig = [
             },
         ]
     },
-    {
-        key: 'ourJob',
-        path: 'our-job/gallery',
-        title: 'Acerca de Nuestro Trabajo',
-        translateKey: 'nav.ourJob',
-        icon: 'cogs',
-        type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
-        subMenu: []
-    },
-
-
-
-
 ]
 
 export default navigationConfig
