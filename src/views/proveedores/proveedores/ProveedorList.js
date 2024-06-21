@@ -6,11 +6,14 @@ import { CgAdd } from 'react-icons/cg';
 import { Button } from "components/ui";
 import { apiGetProveedores } from 'services/ProveedorService';
 import ProveedorDrawer from './ProveedorDrawer';
+import ProveedorDialog from './ProveedorDialog'; // Importa ProveedorDialog
 
 const ProveedorList = () => {
 
   const [proveedoresList, setProveedoresList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedProveedor, setSelectedProveedor] = useState(null); // Estado para el proveedor seleccionado
 
   useEffect(() => {
     const fetchProveedores = async () => {
@@ -20,15 +23,20 @@ const ProveedorList = () => {
     fetchProveedores();
   }, []);
 
-
-
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
+    const onView = () => {
+      setSelectedProveedor(row); // Setea el proveedor seleccionado
+      setViewDialogOpen(true); // Abre el diálogo
+    };
+
     const onEdit = () => {
+      // Lógica para editar
     }
 
     const onDelete = () => {
+      // Lógica para eliminar
     }
 
     return (
@@ -38,7 +46,7 @@ const ProveedorList = () => {
           size="xs"
           variant="solid"
           icon={<HiEye />}
-          onClick={onEdit}
+          onClick={onView}
         />
         <Button
           title='Editar datos'
@@ -85,6 +93,11 @@ const ProveedorList = () => {
       sortable: true,
     },
     {
+      header: 'Tipo de Proveedor',
+      accessorKey: 'tipo_proveedor.tipo', 
+      sortable: true,
+    },
+    {
       header: 'Opciones',
       sortable: false,
       cell: props => {
@@ -96,9 +109,9 @@ const ProveedorList = () => {
     }
   ];
   
-    const openDrawer = () => {
-      setIsDrawerOpen(true);
-    };
+  const openDrawer = () => {
+    setIsDrawerOpen(true);
+  };
 
   return (
     <>
@@ -118,6 +131,13 @@ const ProveedorList = () => {
         <BaseDataTable columns={columns} reqUrl={'/proveedores/listaproveedores'} />
       </div>
       <ProveedorDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} />
+      {selectedProveedor && (
+        <ProveedorDialog
+          isOpen={viewDialogOpen}
+          onClose={() => setViewDialogOpen(false)}
+          proveedor={selectedProveedor}
+        />
+      )}
     </>
   );
 };
