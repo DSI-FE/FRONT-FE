@@ -4,13 +4,17 @@ import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
 import { Button } from "components/ui";
-import { apiGetClientes } from 'services/ClienteService';
+import { apiGetClientes, apiDeleteCliente } from 'services/ClienteService';
 import ClienteDrawer from './ClienteDrawer';
+import DeleteDialog from './components/DeleteDialog/DeleteDialog';
 
 const ClienteList = () => {
 
   const [clientesList, setClientesList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null); 
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -20,7 +24,22 @@ const ClienteList = () => {
     fetchClientes();
   }, []);
 
+  const onDelete = (client) => {
+    setSelectedClient(client);
+    setShowConfirmation(true);
+  };
 
+  const handleDeleteComplete = async () => {
+    try {
+      await apiDeleteCliente(selectedClient.id); // Llama a apiDeleteCliente para eliminar el cliente
+      const clientesResponse = await apiGetClientes();
+      setClientesList(clientesResponse.data);
+    } catch (error) {
+      console.error('Error al eliminar el cliente:', error);
+    } finally {
+      setShowConfirmation(false);
+    }
+  };
 
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
@@ -28,8 +47,7 @@ const ClienteList = () => {
     const onEdit = () => {
     }
 
-    const onDelete = () => {
-    }
+ 
 
     return (
       <div className='flex justify-center text-center space-x-4'>
@@ -52,7 +70,7 @@ const ClienteList = () => {
           size="xs"
           variant="solid"
           icon={<HiTrash />}
-          onClick={onDelete}
+          onClick={() => onDelete(row)}
         />
       </div>
     );
@@ -86,9 +104,19 @@ const ClienteList = () => {
     }
   ];
   
+
     const openDrawer = () => {
       setIsDrawerOpen(true);
     };
+
+    const closeDrawer = () => {
+      setIsDrawerOpen(false);
+    };
+  
+    const closeConfirmation = () => {
+      setShowConfirmation(false);
+    };
+  
 
   return (
     <>
@@ -107,7 +135,15 @@ const ClienteList = () => {
       <div>
         <BaseDataTable columns={columns} reqUrl={'/clientes/listaclientes'} />
       </div>
-      <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} />
+      <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={closeDrawer} />
+      {selectedClient && (
+        <DeleteDialog
+          isOpen={showConfirmation}
+          onClose={() => setShowConfirmation(false)}
+          client={selectedClient}
+          onDeleteComplete={handleDeleteComplete}
+        />
+      )}
     </>
   );
 };

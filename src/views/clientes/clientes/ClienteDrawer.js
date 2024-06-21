@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Upload, Input, Button, Drawer, Radio, Switcher } from 'components/ui';
-import { apiCreateCliente } from 'services/ClienteService';
+import { apiCreateCliente, apiDeleteCliente } from 'services/ClienteService';
 
 const ClienteDrawer = ({ isOpen, eventSent, setIsOpen, drawerOpen, formType }) => {
     const [nombres, setNombres] = useState('');
