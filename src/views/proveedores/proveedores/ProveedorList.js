@@ -29,8 +29,8 @@ const ProveedorList = () => {
     const dispatch = useDispatch();
 
     const onView = () => {
-      setSelectedProveedor(row); // Setea el proveedor seleccionado
-      setViewDialogOpen(true); // Abre el diálogo
+      setSelectedProveedor(row); 
+      setViewDialogOpen(true); 
     };
 
     const onEdit = () => {
@@ -38,8 +38,8 @@ const ProveedorList = () => {
     }
 
     const onDelete = () => {
-      setSelectedProveedor(row); // Setea el proveedor seleccionado
-      setDeleteDialogOpen(true); // Abre el diálogo de eliminación
+      setSelectedProveedor(row); 
+      setDeleteDialogOpen(true); 
     }
 
     return (

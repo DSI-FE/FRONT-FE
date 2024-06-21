@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, Drawer, Select } from 'components/ui';
+import { Input, Button, Drawer, Select, Notification, toast } from 'components/ui';
 import { apiCreateProveedor } from 'services/ProveedorService';
 import { apiGetTiposProveedor } from "services/TipoProveedorService";
 
@@ -60,10 +60,22 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
 
     const onDrawerClose = () => {
         setIsOpen(false);
+        clearFields();
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        if (!codigo || !nombre || !nit || !tipoProveedor) {
+            const errorNotification = (
+                <Notification title="Error" type="danger">
+                    Por favor, complete todos los campos obligatorios.
+                </Notification>
+            );
+            toast.push(errorNotification);
+            return;
+        }
+
         const proveedorData = {
             codigo,
             nrc,
@@ -77,8 +89,20 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
             await apiCreateProveedor(proveedorData);
             onDrawerClose();
             clearFields();
+            const successNotification = (
+                <Notification title="Completado" type="success">
+                    El proveedor se guardó exitosamente.
+                </Notification>
+            );
+            toast.push(successNotification);
         } catch (error) {
             console.error('Error al guardar el proveedor:', error);
+            const errorNotification = (
+                <Notification title="Error" type="danger">
+                    Ocurrió un error al guardar el proveedor.
+                </Notification>
+            );
+            toast.push(errorNotification);
         }
     };
 
