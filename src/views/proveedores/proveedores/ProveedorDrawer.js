@@ -63,16 +63,30 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
         clearFields();
     }
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const validateForm = () => {
+        if (!codigo || !nombre || !nit || !serie || !tipoProveedor) {
+            const missingFields = [];
+            if (!codigo) missingFields.push('Código');
+            if (!nombre) missingFields.push('Nombre');
+            if (!serie) missingFields.push('Serie');
+            if (!nit) missingFields.push('NIT');
+            if (!tipoProveedor) missingFields.push('Tipo de Proveedor');
 
-        if (!codigo || !nombre || !nit || !tipoProveedor) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
-                    Por favor, complete todos los campos obligatorios.
+                    {`Los siguientes campos son obligatorios: ${missingFields.join(', ')}`}
                 </Notification>
             );
             toast.push(errorNotification);
+            return false;
+        }
+        return true;
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!validateForm()) {
             return;
         }
 
@@ -87,22 +101,22 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
 
         try {
             await apiCreateProveedor(proveedorData);
-            onDrawerClose();
-            clearFields();
-            const successNotification = (
+            const toastNotification = (
                 <Notification title="Completado" type="success">
                     El proveedor se guardó exitosamente.
                 </Notification>
             );
-            toast.push(successNotification);
+            toast.push(toastNotification);
+            onDrawerClose();
+            clearFields();
         } catch (error) {
-            console.error('Error al guardar el proveedor:', error);
             const errorNotification = (
                 <Notification title="Error" type="danger">
                     Ocurrió un error al guardar el proveedor.
                 </Notification>
             );
             toast.push(errorNotification);
+            console.error('Error al guardar el proveedor:', error);
         }
     };
 
@@ -142,7 +156,7 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
                     </h4>
                 </div>
             }
-            footer={<Footer onCancel={onDrawerClose} onSave={handleSubmit} onReset={handleReset} />}
+            footer={<Footer onReset={handleReset} onCancel={onDrawerClose} onSave={handleSubmit} />}
             width={500}
         >
             <div className="p-4 flex flex-col">
