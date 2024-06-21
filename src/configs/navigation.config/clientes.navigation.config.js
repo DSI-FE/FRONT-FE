@@ -14,7 +14,7 @@ const clientesNavigationConfig = [
 		  key: 'clientes.clientes',
 		  path: `${CLIENTES_PREFIX_PATH}/clientes`,
 		  translateKey: 'Listado',
-		  icon: 'contacts',
+		  icon: 'dsi',
 		  type: NAV_ITEM_TYPE_COLLAPSE,
 		  authority: [ADMIN, USER],
 		  subMenu: [ 
