@@ -7,6 +7,7 @@ import { Button } from "components/ui";
 import { apiGetClientes, apiDeleteCliente } from 'services/ClienteService';
 import ClienteDrawer from './ClienteDrawer';
 import DeleteDialog from './components/DeleteDialog/DeleteDialog';
+import ClienteDialog from './ClienteDialog'; 
 
 const ClienteList = () => {
   const [clientesList, setClientesList] = useState([]);
@@ -14,6 +15,7 @@ const ClienteList = () => {
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false); 
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -25,7 +27,7 @@ const ClienteList = () => {
 
   const handleDeleteComplete = async () => {
     try {
-      await apiDeleteCliente(selectedClient.id); // Llama a apiDeleteCliente para eliminar el cliente
+      await apiDeleteCliente(selectedClient.id); 
       const clientesResponse = await apiGetClientes();
       setClientesList(clientesResponse.data);
       
@@ -40,6 +42,11 @@ const ClienteList = () => {
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
+    const onView = () => {
+      setSelectedCliente(row);
+      setIsDialogOpen(true);
+    };
+
     const onEdit = () => {
       setSelectedCliente(row);
       setIsDrawerOpen(true);
@@ -49,7 +56,6 @@ const ClienteList = () => {
     const onDelete = () => {
       setSelectedClient(row);
       setShowConfirmation(true);
-    
     };
 
     return (
@@ -59,7 +65,7 @@ const ClienteList = () => {
           size="xs"
           variant="solid"
           icon={<HiEye />}
-          onClick={() => console.log(row)}
+          onClick={onView} 
         />
         <Button
           title='Editar datos'
@@ -118,7 +124,7 @@ const ClienteList = () => {
   ];
 
   const openDrawer = () => {
-    setSelectedCliente(null); // Limpiamos el cliente seleccionado si es un nuevo registro
+    setSelectedCliente(null); 
     setIsDrawerOpen(true);
   };
 
@@ -146,6 +152,13 @@ const ClienteList = () => {
           onClose={() => setShowConfirmation(false)}
           client={selectedClient}
           onDeleteComplete={handleDeleteComplete}
+        />
+      )}
+      {selectedCliente && (
+        <ClienteDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          cliente={selectedCliente}
         />
       )}
     </>
