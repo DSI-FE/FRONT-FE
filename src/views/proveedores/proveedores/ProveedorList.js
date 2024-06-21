@@ -3,17 +3,19 @@ import BaseDataTable from './BaseDataTable';
 import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
-import { Button } from "components/ui";
-import { apiGetProveedores } from 'services/ProveedorService';
+import { Button, Notification, toast } from "components/ui";
+import { apiGetProveedores, apiDeleteProveedor } from 'services/ProveedorService';
 import ProveedorDrawer from './ProveedorDrawer';
-import ProveedorDialog from './ProveedorDialog'; // Importa ProveedorDialog
+import ProveedorDialog from './ProveedorDialog'; 
+import ProveedorDialogDelete from './ProveedorDialogDelete';
 
 const ProveedorList = () => {
 
   const [proveedoresList, setProveedoresList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [selectedProveedor, setSelectedProveedor] = useState(null); // Estado para el proveedor seleccionado
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
+  const [selectedProveedor, setSelectedProveedor] = useState(null); 
 
   useEffect(() => {
     const fetchProveedores = async () => {
@@ -36,7 +38,8 @@ const ProveedorList = () => {
     }
 
     const onDelete = () => {
-      // Lógica para eliminar
+      setSelectedProveedor(row); // Setea el proveedor seleccionado
+      setDeleteDialogOpen(true); // Abre el diálogo de eliminación
     }
 
     return (
@@ -55,7 +58,7 @@ const ProveedorList = () => {
           icon={<HiPencil />}
           onClick={onEdit}
         />
-        <Button className='bg-red-500 hover.bg-red-400 active.bg-red-700'
+        <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
           title='Eliminar datos'
           size="xs"
           variant="solid"
@@ -68,8 +71,8 @@ const ProveedorList = () => {
 
   const columns = [
     {
-      header: 'ID',
-      accessorKey: 'id',
+      header: 'NOMBRE',
+      accessorKey: 'nombre',
       sortable: true,
     },
     {
@@ -113,6 +116,16 @@ const ProveedorList = () => {
     setIsDrawerOpen(true);
   };
 
+  const handleDeleteSuccess = (id) => {
+    setProveedoresList(proveedoresList.filter(proveedor => proveedor.id !== id));
+    const toastNotification = (
+      <Notification title="Completado" type="success">
+        El proveedor se eliminó exitosamente.
+      </Notification>
+    );
+    toast.push(toastNotification);
+  };
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -132,11 +145,19 @@ const ProveedorList = () => {
       </div>
       <ProveedorDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} />
       {selectedProveedor && (
-        <ProveedorDialog
-          isOpen={viewDialogOpen}
-          onClose={() => setViewDialogOpen(false)}
-          proveedor={selectedProveedor}
-        />
+        <>
+          <ProveedorDialog
+            isOpen={viewDialogOpen}
+            onClose={() => setViewDialogOpen(false)}
+            proveedor={selectedProveedor}
+          />
+          <ProveedorDialogDelete
+            isOpen={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            proveedor={selectedProveedor}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        </>
       )}
     </>
   );
