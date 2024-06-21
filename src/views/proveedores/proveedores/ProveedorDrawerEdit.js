@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Drawer, Select, Notification, toast } from 'components/ui';
-import { apiUpdateProveedor, apiGetProveedorById } from 'services/ProveedorService';
+import { apiUpdateProveedor, apiGetProveedorById, apiGetProveedores } from 'services/ProveedorService';
 import { apiGetTiposProveedor } from 'services/TipoProveedorService';
 
 const ProveedorDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
@@ -13,12 +13,12 @@ const ProveedorDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         tipo_proveedor_id: ''
     });
     const [tiposProveedor, setTiposProveedor] = useState([]);
+    const [selectedTipoProveedor, setSelectedTipoProveedor] = useState(null);
 
     useEffect(() => {
         const fetchProveedor = async (id) => {
             try {
                 const response = await apiGetProveedorById(id);
-                console.log('Datos del proveedor:', response.data.data); // Verifica los datos obtenidos
                 setFormData({
                     codigo: response.data.data.codigo,
                     nrc: response.data.data.nrc,
@@ -26,6 +26,10 @@ const ProveedorDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
                     nit: response.data.data.nit,
                     serie: response.data.data.serie,
                     tipo_proveedor_id: response.data.data.tipo_proveedor_id
+                });
+                setSelectedTipoProveedor({
+                    value: response.data.data.tipo_proveedor_id,
+                    label: response.data.data.tipo_proveedor.tipo
                 });
             } catch (error) {
                 console.error("Error fetching proveedor:", error);
@@ -35,7 +39,6 @@ const ProveedorDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         const fetchTiposProveedor = async () => {
             try {
                 const response = await apiGetTiposProveedor();
-                console.log('Tipos de proveedor:', response.data.data); // Verifica los datos obtenidos
                 setTiposProveedor(response.data.data || []);
             } catch (error) {
                 console.error("Error fetching tipos de proveedor:", error);
@@ -56,6 +59,7 @@ const ProveedorDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
 
     const handleTipoProveedorChange = (selectedOption) => {
         setFormData({ ...formData, tipo_proveedor_id: selectedOption.value });
+        setSelectedTipoProveedor(selectedOption);
     };
 
     const validateForm = () => {
@@ -187,7 +191,7 @@ const ProveedorDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
                         <label htmlFor="tipo_proveedor">Tipo de Proveedor:</label>
                         <Select
                             id="tipo_proveedor"
-                            value={tiposProveedor.find(tipo => tipo.id === formData.tipo_proveedor_id)}
+                            value={selectedTipoProveedor}
                             onChange={handleTipoProveedorChange}
                             options={tiposProveedor.map(tipo => ({
                                 value: tipo.id,
