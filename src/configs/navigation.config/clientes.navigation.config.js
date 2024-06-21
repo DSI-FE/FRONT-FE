@@ -13,8 +13,8 @@ const clientesNavigationConfig = [
 		{
 		  key: 'clientes.clientes',
 		  path: `${CLIENTES_PREFIX_PATH}/clientes`,
-		  translateKey: 'Cartera',
-		  icon: 'clock',
+		  translateKey: 'Listado',
+		  icon: 'contacts',
 		  type: NAV_ITEM_TYPE_COLLAPSE,
 		  authority: [ADMIN, USER],
 		  subMenu: [ 
