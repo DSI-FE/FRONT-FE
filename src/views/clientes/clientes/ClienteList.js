@@ -4,13 +4,16 @@ import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
 import { Button } from "components/ui";
-import { apiGetClientes } from 'services/ClienteService';
+import { apiGetClientes, apiDeleteCliente } from 'services/ClienteService';
 import ClienteDrawer from './ClienteDrawer';
+import DeleteDialog from './components/DeleteDialog/DeleteDialog';
 
 const ClienteList = () => {
   const [clientesList, setClientesList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -20,16 +23,33 @@ const ClienteList = () => {
     fetchClientes();
   }, []);
 
+  const handleDeleteComplete = async () => {
+    try {
+      await apiDeleteCliente(selectedClient.id); // Llama a apiDeleteCliente para eliminar el cliente
+      const clientesResponse = await apiGetClientes();
+      setClientesList(clientesResponse.data);
+      
+    } catch (error) {
+      console.error('Error al eliminar el cliente:', error);
+    } finally {
+      setShowConfirmation(false);
+      window.location.reload();
+    }
+  };
+
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
     const onEdit = () => {
       setSelectedCliente(row);
       setIsDrawerOpen(true);
+      console.log(selectedCliente);
     };
 
     const onDelete = () => {
-      // Aquí puedes manejar la eliminación del cliente
+      setSelectedClient(row);
+      setShowConfirmation(true);
+    
     };
 
     return (
@@ -67,12 +87,22 @@ const ClienteList = () => {
     },
     {
       header: 'Nombres',
-      accessorKey: 'nombres', 
+      accessorKey: 'nombres',
       sortable: true,
     },
     {
       header: 'Apellidos',
-      accessorKey: 'apellidos', 
+      accessorKey: 'apellidos',
+      sortable: true,
+    },
+    {
+      header: 'Direccion',
+      accessorKey: 'direccion',
+      sortable: true,
+    },
+    {
+      header: 'Correo',
+      accessorKey: 'correoElectronico',
       sortable: true,
     },
     {
@@ -110,6 +140,14 @@ const ClienteList = () => {
         <BaseDataTable columns={columns} reqUrl={'/clientes/listaclientes'} />
       </div>
       <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} cliente={selectedCliente} />
+      {selectedClient && (
+        <DeleteDialog
+          isOpen={showConfirmation}
+          onClose={() => setShowConfirmation(false)}
+          client={selectedClient}
+          onDeleteComplete={handleDeleteComplete}
+        />
+      )}
     </>
   );
 };
