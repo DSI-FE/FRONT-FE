@@ -19,7 +19,7 @@ export async function apiGetProveedores() {
   }
 
 //Para get un proveedor por ID
-export async function apiGeProveedorById(id) {
+export async function apiGetProveedorById(id) {
     return ApiService.fetchData({
       url: `proveedores/proveedorBy/${id}`,
       method: 'GET',

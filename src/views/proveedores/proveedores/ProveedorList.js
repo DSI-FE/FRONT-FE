@@ -4,8 +4,9 @@ import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
 import { Button, Notification, toast } from "components/ui";
-import { apiGetProveedores, apiDeleteProveedor } from 'services/ProveedorService';
+import { apiGetProveedores, apiGetProveedorById } from 'services/ProveedorService';
 import ProveedorDrawer from './ProveedorDrawer';
+import ProveedorDrawerEdit from './ProveedorDrawerEdit';
 import ProveedorDialog from './ProveedorDialog'; 
 import ProveedorDialogDelete from './ProveedorDialogDelete';
 
@@ -13,6 +14,7 @@ const ProveedorList = () => {
 
   const [proveedoresList, setProveedoresList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
   const [selectedProveedor, setSelectedProveedor] = useState(null); 
@@ -34,7 +36,8 @@ const ProveedorList = () => {
     };
 
     const onEdit = () => {
-      // Lógica para editar
+      setSelectedProveedor(row);
+      setIsEditDrawerOpen(true);
     }
 
     const onDelete = () => {
@@ -156,6 +159,12 @@ const ProveedorList = () => {
             onClose={() => setDeleteDialogOpen(false)}
             proveedor={selectedProveedor}
             onDeleteSuccess={handleDeleteSuccess}
+          />
+          <ProveedorDrawerEdit
+            isOpen={isEditDrawerOpen}
+            setIsOpen={setIsEditDrawerOpen}
+            proveedorId={selectedProveedor.id}
+            onClose={() => setIsEditDrawerOpen(false)}
           />
         </>
       )}
