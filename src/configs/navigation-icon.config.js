@@ -17,6 +17,7 @@ import { VscPreview } from 'react-icons/vsc';
 import { RiContactsBook2Line, RiBuildingFill } from 'react-icons/ri';
 
 import { AiFillSchedule } from 'react-icons/ai';
+import { FaCreditCard, FaStoreAlt, FaShoppingCart } from 'react-icons/fa';
 
 import {
     BsBook,
@@ -62,6 +63,9 @@ const navigationIcon = {
     schedule: <AiFillSchedule />,
     courier: <BiMailSend />,
     transport: <FaCarSide/>,
+    ventas: <FaCreditCard/>,
+    inventario: <FaStoreAlt/>,
+    compras: <FaShoppingCart/>
 }
 
 export default navigationIcon

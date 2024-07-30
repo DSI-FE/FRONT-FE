@@ -14,3 +14,8 @@ export const PAGES_PREFIX_PATH = '/pages'
 export const DOCS_PREFIX_PATH = '/docs'
 export const CLIENTES_PREFIX_PATH = '/clientes'
 export const PROVEEDORES_PREFIX_PATH = '/proveedores'
+export const PRODUCTOS_PREFIX_PATH = '/productos'
+export const INVENTARIO_PREFIX_PATH = '/inventario'
+export const COMPRAS_PREFIX_PATH = '/compras'
+export const VENTAS_PREFIX_PATH = '/ventas'
+
