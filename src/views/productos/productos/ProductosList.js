@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
 import { Button, Notification, toast } from "components/ui";
-import { apiGetProveedores, apiGetProveedorById } from 'services/ProveedorService';
+import { apiGetProductos} from 'services/ProductosService';
 import ProductosDrawer from './ProductosDrawer';
 import ProductosDrawerEdit from './ProductosDrawerEdit';
 import ProductosDialog from './ProductosDialog'; 
@@ -12,15 +12,32 @@ import ProductosDialogDelete from './ProductosDialogDelete';
 
 const ProductosList = () => {
 
+  const [productosList, setProductosList] = useState([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
+  const [selectedProducto, setSelectedProducto] = useState(null); 
+
+  useEffect(() => {
+    const fetchProductos = async () => {
+      const productosResponse = await apiGetProductos();
+      setProductosList(productosResponse.data);
+    };
+    fetchProductos();
+  }, []);
+
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
     const onView = () => {
-
+      setSelectedProducto(row); 
+      setViewDialogOpen(true); 
     };
 
     const onEdit = () => {
-
+      setSelectedProducto(row);
+      setIsEditDrawerOpen(true);
     }
 
     const onDelete = () => {
@@ -34,21 +51,14 @@ const ProductosList = () => {
           size="xs"
           variant="solid"
           icon={<HiEye />}
-          onClick={null}
+          onClick={onView}
         />
         <Button
           title='Editar datos'
           size="xs"
           variant="solid"
           icon={<HiPencil />}
-          onClick={null}
-        />
-        <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
-          title='Eliminar datos'
-          size="xs"
-          variant="solid"
-          icon={<HiTrash />}
-          onClick={null}
+          onClick={onEdit}
         />
       </div>
     );
@@ -56,33 +66,28 @@ const ProductosList = () => {
 
   const columns = [
     {
-      header: 'NOMBRE',
-      accessorKey: 'nombre',
+      header: 'ID',
+      accessorKey: 'id',
       sortable: true,
     },
     {
       header: 'Código',
-      accessorKey: 'codigo', 
+      accessorKey: 'producto_id',
       sortable: true,
     },
     {
-      header: 'NRC',
-      accessorKey: 'nrc', 
+      header: 'Nombre',
+      accessorKey: 'nombre_producto', 
       sortable: true,
     },
     {
-      header: 'NIT',
-      accessorKey: 'nit', 
+      header: 'Unidad de medida',
+      accessorKey: 'unidad_medida', 
       sortable: true,
     },
     {
-      header: 'SERIE',
-      accessorKey: 'serie', 
-      sortable: true,
-    },
-    {
-      header: 'Tipo de Proveedor',
-      accessorKey: 'tipo_proveedor.tipo', 
+      header: 'Equivalencia',
+      accessorKey: 'equivalencia', 
       sortable: true,
     },
     {
@@ -98,19 +103,16 @@ const ProductosList = () => {
   ];
   
   const openDrawer = () => {
-
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteSuccess = (id) => {
-   
-  };
 
   return (
     <>
       <div className="flex justify-between items-center">
       <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}> Lista de productos</h2>
         <Button
-          onClick={null}
+          onClick={openDrawer}
           icon={<CgAdd />}
           size="sm"
           variant="solid"
@@ -119,6 +121,25 @@ const ProductosList = () => {
           Agregar nuevo producto
         </Button>
       </div>
+      <div>
+        <BaseDataTable columns={columns} reqUrl={'/inventario/inventario'} />
+      </div>
+      <ProductosDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} />
+      {selectedProducto && (
+        <>
+          <ProductosDialog
+            isOpen={viewDialogOpen}
+            onClose={() => setViewDialogOpen(false)}
+            producto={selectedProducto}
+          />
+        <ProductosDrawerEdit
+        isOpen={isEditDrawerOpen}
+        setIsOpen={setIsEditDrawerOpen}
+        productoId={selectedProducto.id}
+        onClose={() => setIsEditDrawerOpen(false)}
+      />
+      </>
+      )}
     </>
   );
 };

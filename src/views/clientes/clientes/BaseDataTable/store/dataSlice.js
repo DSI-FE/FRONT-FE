@@ -5,7 +5,7 @@ export const initialTableData =
 {
     total: 0,
     current_page: 1,
-    perPage: 10,
+    perPage: 5,
     sort:
     {
         order: '',

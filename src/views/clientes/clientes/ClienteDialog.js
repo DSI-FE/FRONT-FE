@@ -52,6 +52,14 @@ const ClienteDialog = ({ isOpen, onClose, cliente }) => {
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
+                            N° de documento:
+                        </Th>
+                        <Td style={{ padding: '8px' }}>
+                            {detalleCliente && detalleCliente.numeroDocumento}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
                             Teléfono:
                         </Th>
                         <Td style={{ padding: '8px' }}>

@@ -16,6 +16,7 @@ const ClienteList = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -24,6 +25,7 @@ const ClienteList = () => {
     };
     fetchClientes();
   }, []);
+
 
   const handleDeleteComplete = async () => {
     try {
@@ -128,6 +130,7 @@ const ClienteList = () => {
     setIsDrawerOpen(true);
   };
 
+  
   return (
     <>
       <div className="flex justify-between items-center">

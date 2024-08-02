@@ -1,76 +1,71 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Drawer, Select, Notification, toast } from 'components/ui';
-import { apiUpdateProveedor, apiGetProveedorById, apiGetProveedores } from 'services/ProveedorService';
-import { apiGetTiposProveedor } from 'services/TipoProveedorService';
+import { apiUpdateProductos, apiGetProductosById, apiGetUnidades } from 'services/ProductosService';
 
-const ProductosDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
+const ProductosDrawerEdit = ({ isOpen, setIsOpen, productoId }) => {
     const [formData, setFormData] = useState({
-        codigo: '',
-        nrc: '',
-        nombre: '',
-        nit: '',
-        serie: '',
-        tipo_proveedor_id: ''
+        nombreProducto: '',
+        unidadMedida: '',
+        equivalencia: ''
     });
-    const [tiposProveedor, setTiposProveedor] = useState([]);
-    const [selectedTipoProveedor, setSelectedTipoProveedor] = useState(null);
+    const [tiposUnidades, setTiposUnidades] = useState([]);
+    const [selectedTipoProducto, setSelectedTipoProducto] = useState(null);
 
     useEffect(() => {
-        const fetchProveedor = async (id) => {
+        const fetchProductos = async (id) => {
             try {
-                const response = await apiGetProveedorById(id);
-                setFormData({
-                    codigo: response.data.data.codigo,
-                    nrc: response.data.data.nrc,
-                    nombre: response.data.data.nombre,
-                    nit: response.data.data.nit,
-                    serie: response.data.data.serie,
-                    tipo_proveedor_id: response.data.data.tipo_proveedor_id
-                });
-                setSelectedTipoProveedor({
-                    value: response.data.data.tipo_proveedor_id,
-                    label: response.data.data.tipo_proveedor.tipo
-                });
+                const response = await apiGetProductosById(id);
+                const producto = response.data.data[0];
+                // Verifica la estructura de la respuesta
+                    setFormData({
+                        nombreProducto: producto.nombre_producto || '',
+                        unidadMedida: producto.unidad_medida || '',
+                        equivalencia: producto.equivalencia || ''
+                    });
+                    console.log("Nombre:" +producto.nombre_unidad_medida)
+                    setSelectedTipoProducto({
+                        value: producto.unidad_medida || '',
+                        label: producto.nombre_unidad_medida || ''
+                    });
+
+        
             } catch (error) {
-                console.error("Error fetching proveedor:", error);
+                console.error("Error fetching productos:", error);
             }
         };
 
-        const fetchTiposProveedor = async () => {
+        const fetchUnidades = async () => {
             try {
-                const response = await apiGetTiposProveedor();
-                setTiposProveedor(response.data.data || []);
+                const response = await apiGetUnidades();
+                setTiposUnidades(response.data.data || []);
             } catch (error) {
-                console.error("Error fetching tipos de proveedor:", error);
-                setTiposProveedor([]);
+                console.error("Error fetching tipos de productos:", error);
+                setTiposUnidades([]);
             }
         };
-
-        if (proveedorId) {
-            fetchProveedor(proveedorId);
-        }
-        fetchTiposProveedor();
-    }, [proveedorId]);
+        if(productoId){
+            fetchProductos(productoId);
+        }         
+        fetchUnidades();
+    }, [productoId]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleTipoProveedorChange = (selectedOption) => {
-        setFormData({ ...formData, tipo_proveedor_id: selectedOption.value });
-        setSelectedTipoProveedor(selectedOption);
+    const handleTipoUnidadesChange = (selectedOption) => {
+        setFormData({ ...formData, unidadMedida: selectedOption.value });
+        setSelectedTipoProducto(selectedOption);
     };
 
     const validateForm = () => {
-        const { codigo, nombre, nit, serie, tipo_proveedor_id } = formData;
-        if (!codigo || !nombre || !nit || !serie || !tipo_proveedor_id) {
+        const { nombreProducto, unidadMedida, equivalencia } = formData;
+        if (!nombreProducto || !unidadMedida || !equivalencia) {
             const missingFields = [];
-            if (!codigo) missingFields.push('Código');
-            if (!nombre) missingFields.push('Nombre');
-            if (!nit) missingFields.push('NIT');
-            if (!serie) missingFields.push('Serie');
-            if (!tipo_proveedor_id) missingFields.push('Tipo de Proveedor');
+            if (!nombreProducto) missingFields.push('Nombre');
+            if (!unidadMedida) missingFields.push('Unidad');
+            if (!equivalencia) missingFields.push('Equivalencia');
 
             const errorNotification = (
                 <Notification title="Error" type="danger">
@@ -91,10 +86,10 @@ const ProductosDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         }
 
         try {
-            await apiUpdateProveedor(proveedorId, formData);
+            await apiUpdateProductos(productoId, formData);
             const toastNotification = (
                 <Notification title="Completado" type="success">
-                    El proveedor se actualizó exitosamente.
+                    El producto se actualizó exitosamente.
                 </Notification>
             );
             toast.push(toastNotification);
@@ -102,11 +97,11 @@ const ProductosDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         } catch (error) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
-                    Ocurrió un error al actualizar el proveedor.
+                    Ocurrió un error al actualizar el producto.
                 </Notification>
             );
             toast.push(errorNotification);
-            console.error('Error al actualizar el proveedor:', error);
+            console.error('Error al actualizar el producto:', error);
         }
     };
 
@@ -124,7 +119,7 @@ const ProductosDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
             title={
                 <div className="p-2" style={{ marginTop: '2px', textAlign: 'left' }}>
                     <h2 className="text-2xl font-bold mt-2" style={{ color: '#019DE1' }}>
-                        Editar registro del proveedor
+                        Editar registro del producto
                     </h2>
                     <h4 className="text-sm mt-2" style={{ color: 'grey' }}>
                         Complete el formulario...
@@ -133,7 +128,7 @@ const ProductosDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
             }
             footer={
                 <div className="flex justify-between items-center w-full">
-                    <Button size="sm" variant="solid" color="gray-500" onClick={() => setFormData({})}>Limpiar</Button>
+                    <Button size="sm" variant="solid" color="gray-500" onClick={() => setFormData({ nombre: '', unidad: '', equivalencia: '' })}>Limpiar</Button>
                     <Button size="sm" variant="solid" color="gray-500" onClick={onDrawerClose}>Salir</Button>
                     <Button size="sm" variant="solid" onClick={handleSubmit}>Guardar</Button>
                 </div>
@@ -143,60 +138,34 @@ const ProductosDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
             <div className="p-4 flex flex-col">
                 <form onSubmit={handleSubmit}>
                     <div className="mt-0 mb-4">
-                        <label htmlFor="codigo" className="mb-4">Código:</label>
+                        <label htmlFor="nombreProducto" className="mb-4">Nombre del producto:</label>
                         <Input
-                            id="codigo"
-                            name="codigo"
-                            value={formData.codigo}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nrc" className="mb-4">NRC:</label>
-                        <Input
-                            id="nrc"
-                            name="nrc"
-                            value={formData.nrc}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nombre" className="mb-4">Nombre:</label>
-                        <Input
-                            id="nombre"
-                            name="nombre"
-                            value={formData.nombre}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nit" className="mb-4">NIT:</label>
-                        <Input
-                            id="nit"
-                            name="nit"
-                            value={formData.nit}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="serie" className="mb-4">Serie:</label>
-                        <Input
-                            id="serie"
-                            name="serie"
-                            value={formData.serie}
+                            id="nombreProducto"
+                            name="nombreProducto"
+                            value={formData.nombreProducto}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className="mt-4 mb-8">
-                        <label htmlFor="tipo_proveedor">Tipo de Proveedor:</label>
+                        <label htmlFor="unidadMedida">Unidad de medida:</label>
                         <Select
-                            id="tipo_proveedor"
-                            value={selectedTipoProveedor}
-                            onChange={handleTipoProveedorChange}
-                            options={tiposProveedor.map(tipo => ({
+                            id="unidadMedida"
+                            value={selectedTipoProducto}
+                            onChange={handleTipoUnidadesChange}
+                            options={tiposUnidades.map(tipo => ({
                                 value: tipo.id,
-                                label: tipo.tipo
+                                label: tipo.nombreUnidad
                             }))}
+                            isDisabled={true} 
+                        />
+                    </div>
+                    <div className="mt-0 mb-4">
+                        <label htmlFor="equivalencia" className="mb-4">Equivalencia:</label>
+                        <Input
+                            id="equivalencia"
+                            name="equivalencia"
+                            value={formData.equivalencia}
+                            onChange={handleInputChange}
                         />
                     </div>
                 </form>

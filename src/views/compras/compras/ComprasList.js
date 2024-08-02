@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
 import { Button, Notification, toast } from "components/ui";
-import { apiGetProveedores, apiGetProveedorById } from 'services/ProveedorService';
+import { apiGetCompars } from 'services/ComprasService';
 import ComprasDrawer from './ComprasDrawer';
 import ComprasDrawerEdit from './ComprasDrawerEdit';
 import ComprasDialog from './ComprasDialog'; 
@@ -12,11 +12,19 @@ import ComprasDialogDelete from './ComprasDialogDelete';
 
 const ComprasList = () => {
 
+  const [comprasList, setComprasList] = useState([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
+  const [selectedCompra, setSelectedCompra] = useState(null); 
+
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
     const onView = () => {
- 
+      setSelectedCompra(row); 
+      setViewDialogOpen(true); 
     };
 
     const onEdit = () => {
@@ -56,33 +64,28 @@ const ComprasList = () => {
 
   const columns = [
     {
-      header: 'NOMBRE',
-      accessorKey: 'nombre',
+      header: 'ID',
+      accessorKey: 'id',
       sortable: true,
     },
     {
-      header: 'Código',
-      accessorKey: 'codigo', 
+      header: 'Fecha',
+      accessorKey: 'fecha', 
       sortable: true,
     },
     {
-      header: 'NRC',
-      accessorKey: 'nrc', 
+      header: 'Numero',
+      accessorKey: 'numeroCCF', 
       sortable: true,
     },
     {
-      header: 'NIT',
-      accessorKey: 'nit', 
+      header: 'Proveedor',
+      accessorKey: 'proveedor_nombre', 
       sortable: true,
     },
     {
-      header: 'SERIE',
-      accessorKey: 'serie', 
-      sortable: true,
-    },
-    {
-      header: 'Tipo de Proveedor',
-      accessorKey: 'tipo_proveedor.tipo', 
+      header: 'Total',
+      accessorKey: 'totalCompra', 
       sortable: true,
     },
     {
@@ -119,7 +122,18 @@ const ComprasList = () => {
           Agregar nueva compra
         </Button>
       </div>
-      
+      <div>
+        <BaseDataTable columns={columns} reqUrl={'/compras/compras'} />
+      </div>
+      {selectedCompra && (
+        <>
+          <ComprasDialog
+            isOpen={viewDialogOpen}
+            onClose={() => setViewDialogOpen(false)}
+            compra={selectedCompra}
+          />
+        </>
+      )}
     </>
   );
 };

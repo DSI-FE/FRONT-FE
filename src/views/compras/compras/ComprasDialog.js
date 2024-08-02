@@ -1,69 +1,93 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, Table } from "components/ui";
 
-const ComprasDialog = ({ isOpen, onClose, proveedor }) => {
+const ComprasDialog = ({ isOpen, onClose, compra }) => {
     const { Tr, Th, Td, TBody } = Table;
-    const [detalleProveedor, setDetalleProveedor] = useState(null);
+    const [detalleCompra, setDetalleCompra] = useState(null);
 
     useEffect(() => {
-        if (proveedor) {
-            setDetalleProveedor(proveedor);
+        if (compra) {
+            setDetalleCompra(compra);
         }
-    }, [proveedor]);
+    }, [compra]);
 
     return (
         <Dialog isOpen={isOpen} onClose={onClose} width={500}>
             <h2 style={{marginBottom:'25px', marginTop:'2px'}}>
-                Detalle del Proveedor
+                Detalle de la compra
             </h2>
             <Table style={{ borderCollapse: 'collapse', marginBottom:'30px' }}>
                 <TBody>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Código:
+                            Fecha:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.codigo}
+                            {detalleCompra && detalleCompra.fecha}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px',  fontWeight: 'bold' }}>
+                            Numero CCF:
+                        </Th>
+                        <Td style={{ padding: '8px' }}>
+                            {detalleCompra && detalleCompra.numeroCCF}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
                             NRC:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nrc}
+                            {detalleCompra && detalleCompra.proveedor.nrc}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Nombre:
+                            Proveedor:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nombre}
+                            {detalleCompra && detalleCompra.proveedor_nombre}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            NIT:
+                            Compras Exentas:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nit}
+                            {detalleCompra && detalleCompra.comprasExentas}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Serie:
+                            Compras Gravadas:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.serie}
+                            {detalleCompra && detalleCompra.comprasGravadas}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Tipo de Proveedor:
+                            IVA:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.tipo_proveedor.tipo}
+                            {detalleCompra && detalleCompra.ivaCompra}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
+                            IVA Percibido:
+                        </Th>
+                        <Td style={{ padding: '8px' }}>
+                            {detalleCompra && detalleCompra.ivaPercibido}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
+                            Total:
+                        </Th>
+                        <Td style={{ padding: '8px' }}>
+                            {detalleCompra && detalleCompra.totalCompra}
                         </Td>
                     </Tr>
                 </TBody>

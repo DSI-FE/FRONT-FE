@@ -74,7 +74,7 @@ const BaseDataTable = forwardRef((props, ref) => {
 				ref={ref}
 				className="max-w-md md:w-52"
 				size="sm"
-				placeholder="Buscar proveedor"
+				placeholder="Buscar producto"
 				prefix={<HiOutlineSearch className="text-lg" />}
 				onChange={handleInputChange}
 			/>

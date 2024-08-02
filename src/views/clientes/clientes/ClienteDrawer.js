@@ -187,7 +187,7 @@ const ClienteDrawer = ({ isOpen, setIsOpen, cliente }) => {
 
     const onDrawerClose = () => {
         setIsOpen(false);
-        window.location.reload();
+       // window.location.reload();
     };
 
 

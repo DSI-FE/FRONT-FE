@@ -1,51 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Drawer, Select, Notification, toast } from 'components/ui';
-import { apiCreateProveedor } from 'services/ProveedorService';
-import { apiGetTiposProveedor } from "services/TipoProveedorService";
+import { apiCreateProductos, apiUpdateProducto, apiGetUnidades } from 'services/ProductosService';
+
 
 const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent }) => {
-    const [codigo, setCodigo] = useState('');
-    const [nrc, setNrc] = useState('');
-    const [nombre, setNombre] = useState('');
-    const [nit, setNit] = useState('');
-    const [serie, setSerie] = useState('');
-    const [tipoProveedor, setTipoProveedor] = useState(null);
-    const [tiposProveedor, setTiposProveedor] = useState([]);
+    const [nombreProducto, setNombre] = useState('');
+    const [equivalencia, setEquivalencia] = useState('');
+    const [unidad, setUnidad] = useState(null);
+    const [tiposUnidades, setTiposUnidades] = useState([]);
 
     useEffect(() => {
         setIsOpen(drawerOpen);
-        if (formType === "DataProveedor" && eventSent) {
-            setCodigo(eventSent?.extendedProps?.codigo || '');
-            setNrc(eventSent?.extendedProps?.nrc || '');
-            setNombre(eventSent?.extendedProps?.nombre || '');
-            setNit(eventSent?.extendedProps?.nit || '');
-            setSerie(eventSent?.extendedProps?.serie || '');
-            setTipoProveedor(eventSent?.extendedProps?.tipoProveedor || null);
+        if (formType === "DataProducto" && eventSent) {
+            setNombre(eventSent?.extendedProps?.nombre_producto || '');
+            setUnidad(eventSent?.extendedProps?.unidad_medida || '');
+            setEquivalencia(eventSent?.extendedProps?.equivalencia || null);
         } else {
-            setCodigo('');
-            setNrc('');
             setNombre('');
-            setNit('');
-            setSerie('');
-            setTipoProveedor(null);
+            setUnidad(null);
+            setEquivalencia('');
         }
     }, [drawerOpen, formType]);
 
     useEffect(() => {
-        const fetchTiposProveedor = async () => {
+        const fetchTiposUnidad = async () => {
             try {
-                const response = await apiGetTiposProveedor();
+                const response = await apiGetUnidades();
                 if (response.data && Array.isArray(response.data.data)) {
-                    setTiposProveedor(response.data.data);
+                    setTiposUnidades(response.data.data);
                 } else {
-                    setTiposProveedor([]);
+                    setTiposUnidades([]);
                 }
             } catch (error) {
-                console.error("Error fetching tipos de proveedor:", error);
-                setTiposProveedor([]);
+                console.error("Error fetching tipos de unidades:", error);
+                setTiposUnidades([]);
             }
         };
-        fetchTiposProveedor();
+        fetchTiposUnidad();
     }, []);
 
     const Footer = ({ onSave, onCancel, onReset }) => {
@@ -64,13 +55,11 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
     }
 
     const validateForm = () => {
-        if (!codigo || !nombre || !nit || !serie || !tipoProveedor) {
+        if (!nombreProducto || !unidad || !equivalencia) {
             const missingFields = [];
-            if (!codigo) missingFields.push('Código');
-            if (!nombre) missingFields.push('Nombre');
-            if (!serie) missingFields.push('Serie');
-            if (!nit) missingFields.push('NIT');
-            if (!tipoProveedor) missingFields.push('Tipo de Proveedor');
+            if (!nombreProducto) missingFields.push('Nombre');
+            if (!unidad) missingFields.push('Unidad');
+            if (!equivalencia) missingFields.push('Equivalencia');
 
             const errorNotification = (
                 <Notification title="Error" type="danger">
@@ -90,20 +79,18 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
             return;
         }
 
-        const proveedorData = {
-            codigo,
-            nrc,
-            nombre,
-            nit,
-            serie,
-            tipo_proveedor_id: tipoProveedor.value 
+        const productoData = {
+            nombreProducto,
+            unidadMedida: unidad.value,
+            equivalencia
         };
+        console.log(productoData);
 
         try {
-            await apiCreateProveedor(proveedorData);
+            await apiCreateProductos(productoData);
             const toastNotification = (
                 <Notification title="Completado" type="success">
-                    El proveedor se guardó exitosamente.
+                    El producto se guardó exitosamente.
                 </Notification>
             );
             toast.push(toastNotification);
@@ -112,32 +99,29 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
         } catch (error) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
-                    Ocurrió un error al guardar el proveedor.
+                    Ocurrió un error al guardar el producto.
                 </Notification>
             );
             toast.push(errorNotification);
-            console.error('Error al guardar el proveedor:', error);
+            console.error('Error al guardar el producto:', error);
         }
     };
 
     const clearFields = () => {
-        setCodigo('');
-        setNrc('');
         setNombre('');
-        setNit('');
-        setSerie('');
-        setTipoProveedor(null);
+        setUnidad(null);
+        setEquivalencia('');
     };
 
     const handleReset = () => {
         clearFields();
     };
 
-    const handleTipoProveedorChange = (selectedOption) => {
-        setTipoProveedor(selectedOption);
+    const handleTipoUnidadChange = (selectedOption) => {
+        setUnidad(selectedOption);
     };
 
-    const title = formType === "DataProveedor" ? "Editar registro del proveedor" : "Nuevo registro de proveedor";
+    const title = formType === "DataProductos" ? "Editar registro del producto" : "Nuevo registro de producto";
 
     return (
         <Drawer
@@ -162,55 +146,31 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
             <div className="p-4 flex flex-col">
                 <form onSubmit={handleSubmit}>
                     <div className="mt-0 mb-4">
-                        <label htmlFor="codigo" className="mb-4">Código:</label>
-                        <Input
-                            id="codigo"
-                            value={codigo}
-                            onChange={(e) => setCodigo(e.target.value)}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nrc" className="mb-4">NRC:</label>
-                        <Input
-                            id="nrc"
-                            value={nrc}
-                            onChange={(e) => setNrc(e.target.value)}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
                         <label htmlFor="nombre" className="mb-4">Nombre:</label>
                         <Input
                             id="nombre"
-                            value={nombre}
+                            value={nombreProducto}
                             onChange={(e) => setNombre(e.target.value)}
                         />
                     </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nit" className="mb-4">NIT:</label>
-                        <Input
-                            id="nit"
-                            value={nit}
-                            onChange={(e) => setNit(e.target.value)}
+                    <div className="mt-4 mb-8">
+                        <label htmlFor="unidad">Unidad de medida:</label>
+                        <Select
+                            id="unidad"
+                            value={unidad}
+                            onChange={handleTipoUnidadChange}
+                            options={tiposUnidades.map(tipo => ({
+                                value: tipo.id,
+                                label: tipo.nombreUnidad
+                            }))}
                         />
                     </div>
                     <div className="mt-0 mb-4">
-                        <label htmlFor="serie" className="mb-4">Serie:</label>
+                        <label htmlFor="serie" className="mb-4">Equivalencia:</label>
                         <Input
                             id="serie"
-                            value={serie}
-                            onChange={(e) => setSerie(e.target.value)}
-                        />
-                    </div>
-                    <div className="mt-4 mb-8">
-                        <label htmlFor="tipo_proveedor">Tipo de Proveedor:</label>
-                        <Select
-                            id="tipo_proveedor"
-                            value={tipoProveedor}
-                            onChange={handleTipoProveedorChange}
-                            options={tiposProveedor.map(tipo => ({
-                                value: tipo.id,
-                                label: tipo.tipo
-                            }))}
+                            value={equivalencia}
+                            onChange={(e) => setEquivalencia(e.target.value)}
                         />
                     </div>
                 </form>

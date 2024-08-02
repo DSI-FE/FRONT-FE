@@ -1,73 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, Table } from "components/ui";
+import { apiGetProductosBy } from 'services/ProductosService';
 
-const ProductosDialog = ({ isOpen, onClose, proveedor }) => {
+const ProductosDialog = ({ isOpen, onClose, producto }) => {
     const { Tr, Th, Td, TBody } = Table;
-    const [detalleProveedor, setDetalleProveedor] = useState(null);
+    const [detalleProducto, setDetalleProducto] = useState(null);
+
+    // Asegúrate de que `producto` tiene un ID y asigna ese ID a una variable
+    const productoId = producto?.producto_id;
 
     useEffect(() => {
-        if (proveedor) {
-            setDetalleProveedor(proveedor);
+        const fetchProductoDetalles = async (id) => {
+            try {
+                const response = await apiGetProductosBy(id);
+                setDetalleProducto(response.data);
+            } catch (error) {
+                console.error("Error fetching detalle de producto:", error);
+            }
+        };
+
+        if (productoId) {
+            fetchProductoDetalles(productoId);
         }
-    }, [proveedor]);
+    }, [productoId]);
+
+  
 
     return (
         <Dialog isOpen={isOpen} onClose={onClose} width={500}>
-            <h2 style={{marginBottom:'25px', marginTop:'2px'}}>
-                Detalle del Proveedor
+            <h2 style={{ marginBottom: '25px', marginTop: '2px' }}>
+                Detalle del Producto
             </h2>
-            <Table style={{ borderCollapse: 'collapse', marginBottom:'30px' }}>
-                <TBody>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Código:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.codigo}
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px',  fontWeight: 'bold' }}>
-                            NRC:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nrc}
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Nombre:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nombre}
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            NIT:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nit}
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Serie:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.serie}
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Tipo de Proveedor:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.tipo_proveedor.tipo}
-                        </Td>
-                    </Tr>
-                </TBody>
-            </Table>
+            {detalleProducto ? (
+                <Table style={{ borderCollapse: 'collapse', marginBottom: '30px' }}>
+                    <TBody>
+                        <Tr>
+                            <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold', verticalAlign: 'top' }}>
+                                Nombre:
+                            </Th>
+                            <Td colSpan={3} style={{ padding: '8px' }}>
+                                {detalleProducto.nombreProducto}
+                            </Td>
+                        </Tr>
+                        {detalleProducto.data.map((unidad, index) => (
+                            <Tr key={index}>
+                                <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
+                                    Unidad de medida:
+                                </Th>
+                                <Td style={{ padding: '8px' }}>
+                                    {unidad.unidadMedida}
+                                </Td>
+                                <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
+                                    Equivalencia:
+                                </Th>
+                                <Td style={{ padding: '8px' }}>
+                                    {unidad.equivalencia}
+                                </Td>
+                            </Tr>
+                        ))}
+                    </TBody>
+                </Table>
+            ) : (
+                <p>Cargando detalles del producto...</p>
+            )}
         </Dialog>
     );
 };
