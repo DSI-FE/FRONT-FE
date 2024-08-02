@@ -5,6 +5,7 @@ import clientesNavigationConfig from './clientes.navigation.config'
 import Dsi from 'views/dsi';
 import inventarioNavigationConfig from './inventario.navigation.config';
 import comprasNavigationConfig from './compras.navigation.config';
+
 import ventasNavigationConfig from './ventas.navigation.config';
 
 const navigationConfig = [
