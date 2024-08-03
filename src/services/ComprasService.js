@@ -2,8 +2,6 @@
 import ApiService from "./ApiService";
 
 
-
-
 //Para obtener todas las compras
 export async function apiGetCompras() {
     return ApiService.fetchData({
@@ -11,3 +9,12 @@ export async function apiGetCompras() {
       method: 'GET',
     });
   }
+
+  //Para obtener todas las compras
+export async function apiGetCompraBy(id) {
+  return ApiService.fetchData({
+    url: `compras/detallecompra/${id}`,
+    method: 'GET',
+  });
+}
+
