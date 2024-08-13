@@ -172,7 +172,7 @@ const VentasDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent }) =>
                     <div className="mt-0 mb-4">
                         <label htmlFor="nrc" className="mb-4">NRC:</label>
                         <Input
-                            id="nrc"
+                            id="nrc"D
                             value={nrc}
                             onChange={(e) => setNrc(e.target.value)}
                         />

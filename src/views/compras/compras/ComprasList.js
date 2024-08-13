@@ -3,21 +3,22 @@ import BaseDataTable from './BaseDataTable';
 import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
-import { Button, Notification, toast } from "components/ui";
-import { apiGetCompars } from 'services/ComprasService';
+import { Button } from "components/ui";
+import { apiGetCompras } from 'services/ComprasService';
 import ComprasDrawer from './ComprasDrawer';
 import ComprasDrawerEdit from './ComprasDrawerEdit';
 import ComprasDialog from './ComprasDialog'; 
 import ComprasDialogDelete from './ComprasDialogDelete';
+import ComprasAdd from './ComprasAdd'; 
 
 const ComprasList = () => {
-
   const [comprasList, setComprasList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
   const [selectedCompra, setSelectedCompra] = useState(null); 
+  const [showList, setShowList] = useState(true);
 
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const ComprasList = () => {
     };
 
     const onEdit = () => {
-      
+
     }
 
     const onDelete = () => {
@@ -108,23 +109,37 @@ const ComprasList = () => {
 
   };
 
+  const toggleView = () => {
+    setShowList(!showList);
+  };
+
   return (
     <>
       <div className="flex justify-between items-center">
-      <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}> Lista de compras</h2>
-        <Button
-          onClick={null}
-          icon={<CgAdd />}
-          size="sm"
-          variant="solid"
-          className="flex items-center"
-        >
-          Agregar nueva compra
-        </Button>
+        <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
+          {showList ? "Lista de compras" : "Agregar nueva compra"}
+        </h2>
+        <div>
+          <Button
+            onClick={toggleView}
+            icon={<CgAdd />}
+            size="sm"
+            variant="solid"
+            className="flex items-center mr-2"
+          >
+            {showList ? "Agregar nueva compra" : "Listar compras"}
+          </Button>
+        </div>
       </div>
+      
       <div>
-        <BaseDataTable columns={columns} reqUrl={'/compras/compras'} />
+        {showList ? (
+          <BaseDataTable columns={columns} reqUrl={'/compras/compras'} />
+        ) : (
+          <ComprasAdd />
+        )}
       </div>
+      
       {selectedCompra && (
         <>
           <ComprasDialog
