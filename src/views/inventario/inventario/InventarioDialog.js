@@ -1,37 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, Table } from "components/ui";
 
-const InventarioDialog = ({ isOpen, onClose, proveedor }) => {
+const InventarioDialog = ({ isOpen, onClose, inventario }) => {
     const { Tr, Th, Td, TBody } = Table;
-    const [detalleProveedor, setDetalleProveedor] = useState(null);
+    const [detalleInventario, setDetalleInventario] = useState(null);
 
     useEffect(() => {
-        if (proveedor) {
-            setDetalleProveedor(proveedor);
+        if (inventario) {
+            setDetalleInventario(inventario);
         }
-    }, [proveedor]);
+    }, [inventario]);
 
     return (
         <Dialog isOpen={isOpen} onClose={onClose} width={500}>
-            <h2 style={{marginBottom:'25px', marginTop:'2px'}}>
-                Detalle del Proveedor
+            <h2 style={{ marginBottom: '25px', marginTop: '2px' }}>
+                Detalles del producto
             </h2>
-            <Table style={{ borderCollapse: 'collapse', marginBottom:'30px' }}>
+            <Table style={{ borderCollapse: 'collapse', marginBottom: '30px' }}>
                 <TBody>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
                             Código:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.codigo}
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Th style={{ width: '150px', padding: '8px',  fontWeight: 'bold' }}>
-                            NRC:
-                        </Th>
-                        <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nrc}
+                            {detalleInventario && detalleInventario.producto_id}
                         </Td>
                     </Tr>
                     <Tr>
@@ -39,31 +31,39 @@ const InventarioDialog = ({ isOpen, onClose, proveedor }) => {
                             Nombre:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nombre}
+                            {detalleInventario && detalleInventario.nombre_producto}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            NIT:
+                            Unidad de medida:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.nit}
+                            {detalleInventario && detalleInventario.unidad_medida}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Serie:
+                            Existencias:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.serie}
+                            {detalleInventario && detalleInventario.existencias}
                         </Td>
                     </Tr>
                     <Tr>
                         <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
-                            Tipo de Proveedor:
+                            Precio de Costo:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.tipo_proveedor.tipo}
+                            {detalleInventario && detalleInventario.precioCosto}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Th style={{ width: '150px', padding: '8px', fontWeight: 'bold' }}>
+                            Precio de Venta:
+                        </Th>
+                        <Td style={{ padding: '8px' }}>
+                            {detalleInventario && detalleInventario.precioVenta}
                         </Td>
                     </Tr>
                 </TBody>

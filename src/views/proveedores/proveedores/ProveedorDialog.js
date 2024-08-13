@@ -23,7 +23,7 @@ const ProveedorDialog = ({ isOpen, onClose, proveedor }) => {
                             Código:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.codigo}
+                            {detalleProveedor && detalleProveedor.id}
                         </Td>
                     </Tr>
                     <Tr>

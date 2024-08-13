@@ -1,76 +1,78 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Drawer, Select, Notification, toast } from 'components/ui';
-import { apiUpdateProveedor, apiGetProveedorById, apiGetProveedores } from 'services/ProveedorService';
-import { apiGetTiposProveedor } from 'services/TipoProveedorService';
-
-const InventarioDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
+import { apiUpdateInventario, apiGetProductosById, apiGetInventario, apiSumaInventario, apiGetProductosBy } from 'services/InventarioService';
+import { apiGetUnidades } from 'services/ProductosService';
+const InventarioDrawerEdit = ({ isOpen, setIsOpen, inventarioId }) => {
     const [formData, setFormData] = useState({
-        codigo: '',
-        nrc: '',
-        nombre: '',
-        nit: '',
-        serie: '',
-        tipo_proveedor_id: ''
+        nombreProducto: '',
+        unidadMedida: '',
+        existencias: '',
+        precioCosto: '',
+        precioVenta: '',
     });
-    const [tiposProveedor, setTiposProveedor] = useState([]);
-    const [selectedTipoProveedor, setSelectedTipoProveedor] = useState(null);
+    const [tiposUnidades, setTiposUnidades] = useState([]);
+    const [selectedTipoProducto, setSelectedTipoProducto] = useState(null);
+
 
     useEffect(() => {
-        const fetchProveedor = async (id) => {
+        const fetchInventario = async (id) => {
+            
             try {
-                const response = await apiGetProveedorById(id);
+                const response = await apiGetProductosById(id);
+                const inventario = response.data.data[0];
                 setFormData({
-                    codigo: response.data.data.codigo,
-                    nrc: response.data.data.nrc,
-                    nombre: response.data.data.nombre,
-                    nit: response.data.data.nit,
-                    serie: response.data.data.serie,
-                    tipo_proveedor_id: response.data.data.tipo_proveedor_id
+                    nombreProducto: inventario.nombre_producto,
+                    unidadMedida: inventario.unidad_medida,
+                    existencias: inventario.existencias,
+                    precioCosto: inventario.precioCosto,
+                    precioVenta: inventario.precioVenta,
                 });
-                setSelectedTipoProveedor({
-                    value: response.data.data.tipo_proveedor_id,
-                    label: response.data.data.tipo_proveedor.tipo
-                });
+                console.log("Nombre:" +inventario.nombre_unidad_medida)
+                    setSelectedTipoProducto({
+                        value: inventario.unidad_medida || '',
+                        label: inventario.nombre_unidad_medida || ''
+                    });
+
             } catch (error) {
-                console.error("Error fetching proveedor:", error);
+                console.error("Error fetching inventario:", error);
             }
         };
 
-        const fetchTiposProveedor = async () => {
+        const fetchUnidades = async () => {
             try {
-                const response = await apiGetTiposProveedor();
-                setTiposProveedor(response.data.data || []);
+                const response = await apiGetUnidades();
+                setTiposUnidades(response.data.data || []);
             } catch (error) {
-                console.error("Error fetching tipos de proveedor:", error);
-                setTiposProveedor([]);
+                console.error("Error fetching tipos de productos:", error);
+                setTiposUnidades([]);
             }
         };
 
-        if (proveedorId) {
-            fetchProveedor(proveedorId);
+        if (inventarioId) {
+            fetchInventario(inventarioId);
         }
-        fetchTiposProveedor();
-    }, [proveedorId]);
+        fetchUnidades();
+    }, [inventarioId]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
-    const handleTipoProveedorChange = (selectedOption) => {
-        setFormData({ ...formData, tipo_proveedor_id: selectedOption.value });
-        setSelectedTipoProveedor(selectedOption);
+    const handleTipoUnidadesChange = (selectedOption) => {
+        setFormData({ ...formData, unidadMedida: selectedOption.value });
+        setSelectedTipoProducto(selectedOption);
     };
 
+
     const validateForm = () => {
-        const { codigo, nombre, nit, serie, tipo_proveedor_id } = formData;
-        if (!codigo || !nombre || !nit || !serie || !tipo_proveedor_id) {
+        const { nombreProducto, unidadMedida, existencias, precioCosto, precioVenta } = formData;
+        if (!nombreProducto || !unidadMedida || !existencias || !precioCosto || !precioVenta) {
             const missingFields = [];
-            if (!codigo) missingFields.push('Código');
-            if (!nombre) missingFields.push('Nombre');
-            if (!nit) missingFields.push('NIT');
-            if (!serie) missingFields.push('Serie');
-            if (!tipo_proveedor_id) missingFields.push('Tipo de Proveedor');
+            if (!nombreProducto) missingFields.push('Nombre del Producto');
+            if (!unidadMedida) missingFields.push('Unidad de Medida');
+            if (!existencias) missingFields.push('Existencias');
+            if (!precioCosto) missingFields.push('Precio de Costo');
+            if (!precioVenta) missingFields.push('Precio de Venta');
 
             const errorNotification = (
                 <Notification title="Error" type="danger">
@@ -91,10 +93,10 @@ const InventarioDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         }
 
         try {
-            await apiUpdateProveedor(proveedorId, formData);
+            await apiUpdateInventario(inventarioId, formData);
             const toastNotification = (
                 <Notification title="Completado" type="success">
-                    El proveedor se actualizó exitosamente.
+                    El inventario se actualizó exitosamente.
                 </Notification>
             );
             toast.push(toastNotification);
@@ -102,11 +104,11 @@ const InventarioDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         } catch (error) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
-                    Ocurrió un error al actualizar el proveedor.
+                    Ocurrió un error al actualizar el inventario.
                 </Notification>
             );
             toast.push(errorNotification);
-            console.error('Error al actualizar el proveedor:', error);
+            console.error('Error al actualizar el inventario:', error);
         }
     };
 
@@ -124,7 +126,7 @@ const InventarioDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
             title={
                 <div className="p-2" style={{ marginTop: '2px', textAlign: 'left' }}>
                     <h2 className="text-2xl font-bold mt-2" style={{ color: '#019DE1' }}>
-                        Editar registro del proveedor
+                        Editar registro del inventario
                     </h2>
                     <h4 className="text-sm mt-2" style={{ color: 'grey' }}>
                         Complete el formulario...
@@ -142,61 +144,54 @@ const InventarioDrawerEdit = ({ isOpen, setIsOpen, proveedorId }) => {
         >
             <div className="p-4 flex flex-col">
                 <form onSubmit={handleSubmit}>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="codigo" className="mb-4">Código:</label>
+                <div className="mt-0 mb-4">
+                        <label htmlFor="nombreProducto" className="mb-4">Nombre del producto:</label>
                         <Input
-                            id="codigo"
-                            name="codigo"
-                            value={formData.codigo}
+                            id="nombreProducto"
+                            name="nombreProducto"
+                            value={formData.nombreProducto}
                             onChange={handleInputChange}
+                            disabled
                         />
                     </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nrc" className="mb-4">NRC:</label>
-                        <Input
-                            id="nrc"
-                            name="nrc"
-                            value={formData.nrc}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nombre" className="mb-4">Nombre:</label>
-                        <Input
-                            id="nombre"
-                            name="nombre"
-                            value={formData.nombre}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="nit" className="mb-4">NIT:</label>
-                        <Input
-                            id="nit"
-                            name="nit"
-                            value={formData.nit}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-0 mb-4">
-                        <label htmlFor="serie" className="mb-4">Serie:</label>
-                        <Input
-                            id="serie"
-                            name="serie"
-                            value={formData.serie}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="mt-4 mb-8">
-                        <label htmlFor="tipo_proveedor">Tipo de Proveedor:</label>
+                <div className="mt-4 mb-8">
+                        <label htmlFor="unidadMedida">Unidad de medida:</label>
                         <Select
-                            id="tipo_proveedor"
-                            value={selectedTipoProveedor}
-                            onChange={handleTipoProveedorChange}
-                            options={tiposProveedor.map(tipo => ({
+                            id="unidadMedida"
+                            value={selectedTipoProducto}
+                            onChange={handleTipoUnidadesChange}
+                            options={tiposUnidades.map(tipo => ({
                                 value: tipo.id,
-                                label: tipo.tipo
+                                label: tipo.nombreUnidad
                             }))}
+                            isDisabled={true} 
+                        />
+                    </div>
+                    <div className="mt-0 mb-4">
+                        <label htmlFor="existencias" className="mb-4">Existencias:</label>
+                        <Input
+                            id="existencias"
+                            name="existencias"
+                            value={formData.existencias}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className="mt-0 mb-4">
+                        <label htmlFor="precioCosto" className="mb-4">Precio de Costo:</label>
+                        <Input
+                            id="precioCosto"
+                            name="precioCosto"
+                            value={formData.precioCosto}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className="mt-0 mb-4">
+                        <label htmlFor="precioVenta" className="mb-4">Precio de Venta:</label>
+                        <Input
+                            id="precioVenta"
+                            name="precioVenta"
+                            value={formData.precioVenta}
+                            onChange={handleInputChange}
                         />
                     </div>
                 </form>
