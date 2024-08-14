@@ -52,4 +52,12 @@ export async function apiUpdateProductos(idProd, data) {
       data,
     });
   }
+
+  //Para listar los poductos y luego sus unidades de medida
+export async function apiGetNombreProductos() {
+  return ApiService.fetchData({
+    url: 'productos/productos',
+    method: 'GET',
+  });
+}
   

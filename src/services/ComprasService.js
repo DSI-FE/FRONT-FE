@@ -18,3 +18,11 @@ export async function apiGetCompraBy(id) {
   });
 }
 
+//para crear una nueva compra
+export async function apiCreateCompra(data) {
+  return ApiService.fetchData({
+    url: 'compras/addcompra',
+    method: 'POST',
+    data,
+  });
+}
