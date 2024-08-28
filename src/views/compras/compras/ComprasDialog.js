@@ -13,7 +13,6 @@ const ComprasDialog = ({ isOpen, onClose, compra }) => {
             try {
                 const response = await apiGetCompraBy(ccf);
                 setCompraData(response.data);
-                console.log("Compra data:", response.data); // Depuración: Ver datos de la compra
             } catch (error) {
                 console.error("Error fetching detalle de compra:", error);
             }
@@ -59,7 +58,6 @@ const ComprasDialog = ({ isOpen, onClose, compra }) => {
                             <Th style={{ padding: '8px', fontWeight: 'bold', backgroundColor: '#c0e2f9' }}>Producto</Th>
                             <Th style={{ padding: '8px', fontWeight: 'bold', backgroundColor: '#c0e2f9' }}>Unidad de medida</Th>
                             <Th style={{ padding: '8px', fontWeight: 'bold', backgroundColor: '#c0e2f9' }}>Costo</Th>
-                            <Th style={{ padding: '8px', fontWeight: 'bold', backgroundColor: '#c0e2f9' }}>IVA</Th>
                             <Th style={{ padding: '8px', fontWeight: 'bold', backgroundColor: '#c0e2f9' }}>Total</Th>
                         </Tr>
                         {detalles.map((detalle, index) => (
@@ -68,7 +66,6 @@ const ComprasDialog = ({ isOpen, onClose, compra }) => {
                                 <Td style={{ padding: '8px', textAlign: 'center' }}>{detalle.producto?.nombreProducto}</Td>
                                 <Td style={{ padding: '8px', textAlign: 'center' }}>{detalle.unidad_medida}</Td>
                                 <Td style={{ padding: '8px', textAlign: 'center' }}>{detalle.costo}</Td>
-                                <Td style={{ padding: '8px', textAlign: 'center' }}>{detalle.iva}</Td>
                                 <Td style={{ padding: '8px', textAlign: 'center' }}>{detalle.total}</Td>
                             </Tr>
                         ))}

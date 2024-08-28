@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo, useRef, forwardRef } from 'react';
+import React, { useEffect, useCallback, useMemo, forwardRef } from 'react';
 import { getData, setTableData, setSortedColumn, setUrl } from './store/dataSlice';
 import cloneDeep from 'lodash/cloneDeep';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,7 +6,6 @@ import { DataTable } from 'components/shared';
 import debounce from 'lodash/debounce';
 import { Input } from 'components/ui';
 import { HiOutlineSearch } from 'react-icons/hi';
-
 import { injectReducer } from 'store/index';
 import reducer from './store';
 
