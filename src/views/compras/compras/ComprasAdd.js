@@ -71,6 +71,21 @@ const ComprasAdd = () => {
         }
     };
 
+    const clearFields = () => {
+        setCompra({
+            fecha: '',
+            numeroCCF: '',
+            codigoProveedor: '',
+            nrcProveedor: '',
+            nombreProveedor: null,
+            exentas: 0,
+            gravadas: 0,
+            percepcion: 0,
+            total: 0
+        })
+        setProductosList([]);
+    };
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -95,6 +110,7 @@ const ComprasAdd = () => {
             }))
         };
 
+
         try {
             await apiCreateCompra(compraData);
             const toastNotification = (
@@ -112,18 +128,20 @@ const ComprasAdd = () => {
             toast.push(errorNotification);
             console.error('Error al guardar la compra:', error);
         }
+
+        clearFields();
     };
 
     useEffect(() => {
         const calcularTotalCompra = () => {
             return productosList.reduce((acc, producto) => acc + parseFloat(producto.total), 0).toFixed(2);
         };
-    
+
         setCompra(prevCompra => ({
             ...prevCompra,
-            gravadas: (calcularTotalCompra() / 1.13).toFixed(2),
-            iva: ((calcularTotalCompra() / 1.13) * 0.13).toFixed(2),
-            total: calcularTotalCompra()
+            gravadas: (calcularTotalCompra()),
+            iva: (calcularTotalCompra() * 0.13).toFixed(2),
+            total: (calcularTotalCompra() * 1.13).toFixed(2)
         }));
     }, [productosList]);
 
@@ -194,7 +212,7 @@ const ComprasAdd = () => {
                         onClick={() => setProductoDialogOpen(true)}
                         size="sm"
                         variant="solid"
-                        className="flex items-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40" // Adjust the width as needed
+                        className="flex items-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40"
                     >
                         Agregar producto
                     </Button>
@@ -209,9 +227,8 @@ const ComprasAdd = () => {
                             <Th>Descripción del producto</Th>
                             <Th>Unidad</Th>
                             <Th>Precio unitario</Th>
-                            <Th>IVA</Th>
                             <Th>Total</Th>
-                            <Th>Acción</Th> {/* Columna para acciones */}
+                            <Th>Acción</Th>
                         </Tr>
                     </THead>
                     <TBody>
@@ -222,9 +239,8 @@ const ComprasAdd = () => {
                                 <Td>{prod.cantidad}</Td>
                                 <Td>{prod.descripcion}</Td>
                                 <Td>{prod.unidad}</Td>
-                                <Td>{prod.precioUnitario}</Td>
-                                <Td>{prod.iva}</Td>
-                                <Td>{prod.total}</Td>
+                                <Td>{"$ " + prod.precioUnitario}</Td>
+                                <Td>{"$ " + prod.total}</Td>
                                 <Td>
                                     <Button
                                         className="bg-red-500 hover:bg-red-400 active:bg-red-700"
@@ -296,9 +312,14 @@ const ComprasAdd = () => {
                 </div>
             </Card>
 
-            <Button className="bg-blue-500 hover:bg-blue-400 active:bg-blue-700 mt-4" onClick={handleSubmit}>
+            <Button
+                size="sm"
+                variant="solid"
+                className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center"
+                onClick={handleSubmit}>
                 REGISTRAR
             </Button>
+
 
             <ProductoDialog
                 isOpen={productoDialogOpen}

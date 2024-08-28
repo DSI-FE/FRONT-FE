@@ -23,7 +23,7 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
     };
 
     const totalIva = (producto.precioUnitario * 0.13).toFixed(2);
-    const totalConIva = (producto.precioUnitario * 1.13).toFixed(2);
+    const totalConIva = ((producto.precioUnitario * producto.cantidad)).toFixed(2);
 
     const validateForm = () => {
         const { codigo, descripcion, unidad_id, cantidad, precioUnitario } = producto;
@@ -159,7 +159,7 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
                         />
                     </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label>Precio unitario</label>
                         <Input
@@ -167,14 +167,6 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
                             name="precioUnitario"
                             value={producto.precioUnitario}
                             onChange={handleProductoChange}
-                        />
-                    </div>
-                    <div>
-                        <label>IVA</label>
-                        <Input
-                            type="number"
-                            name="iva"
-                            value={totalIva}
                         />
                     </div>
                     <div>
