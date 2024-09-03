@@ -30,7 +30,7 @@ const VentasAdd = () => {
     const [listaCondicion, setListaCondicion] = useState([]);
     const [listaDocumentos, setListaDocumentos] = useState([]);
     //boton
-    const [isDisabled, setIsDisabled] = useState(false);
+    //const [isDisabled, setIsDisabled] = useState(false);
 
     useEffect(() => {
         const fetchClientes = async () => {
@@ -202,9 +202,9 @@ const VentasAdd = () => {
                 </Notification>
             );
             toast.push(toastNotification);
-            //clearFields();
+            clearFields();
             //prueba del boton
-            setIsDisabled(true)
+           // setIsDisabled(true)
         } catch (error) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
@@ -372,7 +372,7 @@ const VentasAdd = () => {
                     variant="solid"
                     className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center border border-black"
                     onClick={handleSubmit}
-                    disabled={isDisabled}>
+                    >
                     REGISTRAR PEDIDO
                 </Button>
 
