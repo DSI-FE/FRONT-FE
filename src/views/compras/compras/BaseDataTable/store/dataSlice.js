@@ -5,7 +5,7 @@ export const initialTableData =
 {
     total: 0,
     current_page: 1,
-    perPage: 5,
+    perPage: 10,
     sort:
     {
         order: '',
@@ -14,14 +14,14 @@ export const initialTableData =
     search: ''
 }
 
-export const getData = createAsyncThunk('dataClientes/getData', async (data) => {
+export const getData = createAsyncThunk('dataProveedores/getData', async (data) => {
     data.reqParams = data.reqParams ? data.reqParams : { ...initialTableData }
     return await apiGetData(data.reqParams, data.reqUrl);
 })
 
 const dataSlice = createSlice(
     {
-        name: 'dataClientes',
+        name: 'dataProveedores',
         initialState:
         {
             url: '',

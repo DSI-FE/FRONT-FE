@@ -9,6 +9,10 @@ import magazineRoute from './magazineRoute'
 
 import clientesRoute from './clientesRoute';
 import proveedorRoute from './proveedoresRoute';
+import productosRoute from './productosRoute';
+import ventasRoute from './ventasRoute';
+import comprasRoute from './compras.Route';
+import inventarioRoute from './inventarioRoute';
 
 export const publicRoutes = [ ...authRoute ]
 
@@ -19,6 +23,10 @@ export const protectedRoutes = [
     ...magazineRoute,
     ...ourJobRoute,
     ...clientesRoute,
-    ...proveedorRoute
+    ...proveedorRoute,
+    ...productosRoute,
+    ...ventasRoute,
+    ...comprasRoute,
+    ...inventarioRoute
 
 ]

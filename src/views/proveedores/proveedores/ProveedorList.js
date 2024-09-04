@@ -74,13 +74,13 @@ const ProveedorList = () => {
 
   const columns = [
     {
-      header: 'NOMBRE',
-      accessorKey: 'nombre',
+      header: 'CODIGO',
+      accessorKey: 'id',
       sortable: true,
     },
     {
-      header: 'Código',
-      accessorKey: 'codigo', 
+      header: 'NOMBRE',
+      accessorKey: 'nombre',
       sortable: true,
     },
     {
@@ -91,11 +91,6 @@ const ProveedorList = () => {
     {
       header: 'NIT',
       accessorKey: 'nit', 
-      sortable: true,
-    },
-    {
-      header: 'SERIE',
-      accessorKey: 'serie', 
       sortable: true,
     },
     {

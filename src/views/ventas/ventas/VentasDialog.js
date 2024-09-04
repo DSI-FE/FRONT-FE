@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, Table } from "components/ui";
 
-const ProveedorDialog = ({ isOpen, onClose, proveedor }) => {
+const VentasDialog = ({ isOpen, onClose, proveedor }) => {
     const { Tr, Th, Td, TBody } = Table;
     const [detalleProveedor, setDetalleProveedor] = useState(null);
 
@@ -23,7 +23,7 @@ const ProveedorDialog = ({ isOpen, onClose, proveedor }) => {
                             Código:
                         </Th>
                         <Td style={{ padding: '8px' }}>
-                            {detalleProveedor && detalleProveedor.id}
+                            {detalleProveedor && detalleProveedor.codigo}
                         </Td>
                     </Tr>
                     <Tr>
@@ -72,4 +72,4 @@ const ProveedorDialog = ({ isOpen, onClose, proveedor }) => {
     );
 };
 
-export default ProveedorDialog;
+export default VentasDialog;

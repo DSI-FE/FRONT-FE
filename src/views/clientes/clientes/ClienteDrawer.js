@@ -1,6 +1,12 @@
+<<<<<<< HEAD
+import React, { useState, useEffect, useRef } from "react";
+import { Upload, Input, Button, Drawer, Radio, Switcher } from 'components/ui';
+import { apiCreateCliente, apiDeleteCliente } from 'services/ClienteService';
+=======
 import React, { useState, useEffect } from "react";
 import { Input, Button, Drawer, Notification, toast, Select } from 'components/ui';
 import { apiCreateCliente, apiUpdateCliente, apiGetDepartments, apiGetMunicipios, apiGetActividades } from 'services/ClienteService';
+>>>>>>> alfonsog
 
 
 const ClienteDrawer = ({ isOpen, setIsOpen, cliente }) => {
@@ -187,7 +193,7 @@ const ClienteDrawer = ({ isOpen, setIsOpen, cliente }) => {
 
     const onDrawerClose = () => {
         setIsOpen(false);
-        window.location.reload();
+       // window.location.reload();
     };
 
 
