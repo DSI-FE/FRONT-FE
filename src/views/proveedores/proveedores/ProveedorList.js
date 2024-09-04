@@ -3,14 +3,21 @@ import BaseDataTable from './BaseDataTable';
 import { useDispatch } from 'react-redux';
 import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
 import { CgAdd } from 'react-icons/cg';
-import { Button } from "components/ui";
-import { apiGetProveedores } from 'services/ProveedorService';
+import { Button, Notification, toast } from "components/ui";
+import { apiGetProveedores, apiGetProveedorById } from 'services/ProveedorService';
 import ProveedorDrawer from './ProveedorDrawer';
+import ProveedorDrawerEdit from './ProveedorDrawerEdit';
+import ProveedorDialog from './ProveedorDialog'; 
+import ProveedorDialogDelete from './ProveedorDialogDelete';
 
 const ProveedorList = () => {
 
   const [proveedoresList, setProveedoresList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
+  const [selectedProveedor, setSelectedProveedor] = useState(null); 
 
   useEffect(() => {
     const fetchProveedores = async () => {
@@ -20,15 +27,22 @@ const ProveedorList = () => {
     fetchProveedores();
   }, []);
 
-
-
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
+    const onView = () => {
+      setSelectedProveedor(row); 
+      setViewDialogOpen(true); 
+    };
+
     const onEdit = () => {
+      setSelectedProveedor(row);
+      setIsEditDrawerOpen(true);
     }
 
     const onDelete = () => {
+      setSelectedProveedor(row); 
+      setDeleteDialogOpen(true); 
     }
 
     return (
@@ -38,7 +52,7 @@ const ProveedorList = () => {
           size="xs"
           variant="solid"
           icon={<HiEye />}
-          onClick={onEdit}
+          onClick={onView}
         />
         <Button
           title='Editar datos'
@@ -47,7 +61,7 @@ const ProveedorList = () => {
           icon={<HiPencil />}
           onClick={onEdit}
         />
-        <Button className='bg-red-500 hover.bg-red-400 active.bg-red-700'
+        <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
           title='Eliminar datos'
           size="xs"
           variant="solid"
@@ -60,13 +74,13 @@ const ProveedorList = () => {
 
   const columns = [
     {
-      header: 'ID',
+      header: 'CODIGO',
       accessorKey: 'id',
       sortable: true,
     },
     {
-      header: 'Código',
-      accessorKey: 'codigo', 
+      header: 'NOMBRE',
+      accessorKey: 'nombre',
       sortable: true,
     },
     {
@@ -80,8 +94,8 @@ const ProveedorList = () => {
       sortable: true,
     },
     {
-      header: 'SERIE',
-      accessorKey: 'serie', 
+      header: 'Tipo de Proveedor',
+      accessorKey: 'tipo_proveedor.tipo', 
       sortable: true,
     },
     {
@@ -96,9 +110,19 @@ const ProveedorList = () => {
     }
   ];
   
-    const openDrawer = () => {
-      setIsDrawerOpen(true);
-    };
+  const openDrawer = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const handleDeleteSuccess = (id) => {
+    setProveedoresList(proveedoresList.filter(proveedor => proveedor.id !== id));
+    const toastNotification = (
+      <Notification title="Completado" type="success">
+        El proveedor se eliminó exitosamente.
+      </Notification>
+    );
+    toast.push(toastNotification);
+  };
 
   return (
     <>
@@ -118,6 +142,27 @@ const ProveedorList = () => {
         <BaseDataTable columns={columns} reqUrl={'/proveedores/listaproveedores'} />
       </div>
       <ProveedorDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} />
+      {selectedProveedor && (
+        <>
+          <ProveedorDialog
+            isOpen={viewDialogOpen}
+            onClose={() => setViewDialogOpen(false)}
+            proveedor={selectedProveedor}
+          />
+          <ProveedorDialogDelete
+            isOpen={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            proveedor={selectedProveedor}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+          <ProveedorDrawerEdit
+            isOpen={isEditDrawerOpen}
+            setIsOpen={setIsEditDrawerOpen}
+            proveedorId={selectedProveedor.id}
+            onClose={() => setIsEditDrawerOpen(false)}
+          />
+        </>
+      )}
     </>
   );
 };

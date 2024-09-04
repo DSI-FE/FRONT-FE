@@ -4,7 +4,7 @@ import ApiService from "./ApiService";
 //para crear un nuevo cliente
 export async function apiCreateCliente(data) {
     return ApiService.fetchData({
-      url: 'clientes/cliente',
+      url: 'clientes/clientes',
       method: 'POST',
       data,
     });
@@ -42,4 +42,24 @@ export async function apiDeleteCliente(id) {
       method: 'DELETE',
     });
   }
-  
+    //Para obtener los departamentos
+export async function apiGetDepartments() {
+  return ApiService.fetchData({
+    url: `administration/departments`,
+    method: 'GET',
+  });
+}
+
+export async function apiGetMunicipios() {
+  return ApiService.fetchData({
+    url: `administration/municipalities`,
+    method: 'GET',
+  });
+}
+ 
+export async function apiGetActividades() {
+  return ApiService.fetchData({
+    url: `clientes/listaActividades`,
+    method: 'GET',
+  });
+}

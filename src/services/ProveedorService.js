@@ -1,14 +1,14 @@
 //ESTE ES EL CRUD PARA PROVEEDORES, Y SE PUEDEN SEGUIR AGREGANDO MAS ENDPOINT DEPENDIENDO DE LO QUE SE NECESITE
 import ApiService from "./ApiService";
 
-//para crear un nuevo proveedor
+// Para crear un nuevo proveedor
 export async function apiCreateProveedor(data) {
-    return ApiService.fetchData({
-      url: 'proveedores/proveedor',
-      method: 'POST',
-      data,
-    });
-  }
+  return ApiService.fetchData({
+    url: 'proveedores/proveedores',
+    method: 'POST',
+    data,
+  });
+}
 
 //Para get todos los proveedores
 export async function apiGetProveedores() {
@@ -19,7 +19,7 @@ export async function apiGetProveedores() {
   }
 
 //Para get un proveedor por ID
-export async function apiGeProveedorById(id) {
+export async function apiGetProveedorById(id) {
     return ApiService.fetchData({
       url: `proveedores/proveedorBy/${id}`,
       method: 'GET',

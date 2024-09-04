@@ -3,7 +3,7 @@ import { Input, Button, Drawer, Select, Notification, toast } from 'components/u
 import { apiCreateProveedor } from 'services/ProveedorService';
 import { apiGetTiposProveedor } from "services/TipoProveedorService";
 
-const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent }) => {
+const VentasDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent }) => {
     const [codigo, setCodigo] = useState('');
     const [nrc, setNrc] = useState('');
     const [nombre, setNombre] = useState('');
@@ -172,7 +172,7 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
                     <div className="mt-0 mb-4">
                         <label htmlFor="nrc" className="mb-4">NRC:</label>
                         <Input
-                            id="nrc"
+                            id="nrc"D
                             value={nrc}
                             onChange={(e) => setNrc(e.target.value)}
                         />
@@ -219,4 +219,4 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
     )
 }
 
-export default ProveedorDrawer;
+export default VentasDrawer;

@@ -3,7 +3,7 @@ import { Input, Button, Drawer, Select, Notification, toast } from 'components/u
 import { apiCreateProveedor } from 'services/ProveedorService';
 import { apiGetTiposProveedor } from "services/TipoProveedorService";
 
-const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent }) => {
+const ComprasDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent }) => {
     const [codigo, setCodigo] = useState('');
     const [nrc, setNrc] = useState('');
     const [nombre, setNombre] = useState('');
@@ -219,4 +219,4 @@ const ProveedorDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
     )
 }
 
-export default ProveedorDrawer;
+export default ComprasDrawer;
