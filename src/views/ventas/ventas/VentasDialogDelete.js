@@ -1,42 +1,49 @@
-import React from 'react';
-import { Dialog, Button, Notification, toast } from 'components/ui';
-import { apiDeleteProveedor } from 'services/ProveedorService';
+import React, { useState } from 'react';
+import { toast, Notification } from 'components/ui';
+import { apiDeleteCliente  } from 'services/ClienteService';
 
-const VentasDialogDelete = ({ isOpen, onClose, proveedor, onDeleteSuccess }) => {
-    const handleDelete = async () => {
+const VentasDialogDelete = ({ isOpen, onClose, ventas, onDeleteComplete }) => {
+    const [loading, setLoading] = useState(false);
+
+    const handleConfirm = async () => {
+        setLoading(true);
         try {
-            const response = await apiDeleteProveedor(proveedor.id);
-            onDeleteSuccess(proveedor.id);
-            const errorNotification = (
-                <Notification title="Error" type="danger">
-                    Ocurrió un error al eliminar el proveedor.
-                </Notification>
-            );
-            toast.push(errorNotification);
-            onClose();
+            await apiDeleteCliente(ventas.id);
+            onDeleteComplete();
+            openNotification('success', 'Éxito', 'El cliente se ha eliminado correctamente', 'top-start');
         } catch (error) {
-            const toastNotification = (
-                <Notification title="Completado" type="success">
-                    El proveedor se eliminó exitosamente.
-                </Notification>
-            );
-            toast.push(toastNotification);
-        } finally {
-            onClose(); 
+            const message = error?.response?.data?.message || error.toString();
+            openNotification('danger', 'Algo salió mal', message, 'top-end');
         }
+        setLoading(false);
+        onClose();
+    };
+
+    const openNotification = (type, title, message, placement) => {
+        toast.push(
+            <Notification className="border-red-100" title={title.charAt(0).toUpperCase() + title.slice(1)} type={type} duration={5000}>
+                {message}
+            </Notification>,
+            { placement }
+        );
     };
 
     return (
-        <Dialog isOpen={isOpen} onClose={onClose} width={600}>
-            <h2 style={{ marginBottom: '25px', marginTop: '2px' }}>
-                Confirmar eliminación
-            </h2>
-            <p>¿Estás seguro de que deseas eliminar el proveedor <strong>{proveedor.nombre}</strong>?</p>
-            <div className="flex justify-end space-x-2 mt-4">
-                <Button size="sm" variant="solid" color="gray-500" onClick={onClose}>Cancelar</Button>
-                <Button size="sm" variant="solid" color="red-500" onClick={handleDelete}>Eliminar</Button>
-            </div>
-        </Dialog>
+        <div
+            isOpen={isOpen}
+            onClose={onClose}
+            onCancel={onClose}
+            onConfirm={handleConfirm}
+            type="danger"
+            title="Eliminar Cliente"
+            confirmText="Confirmar"
+            cancelText="Cancelar"
+            confirmButtonColor="red"
+            loading={loading}
+        >
+            <p className="text-justify">Esta acción eliminará permanentemente el cliente seleccionado, por lo que no se mostrará más en el sitio.</p>
+            <p className="font-semibold mt-2">¿Está seguro que desea continuar?</p>
+        </div>
     );
 };
 

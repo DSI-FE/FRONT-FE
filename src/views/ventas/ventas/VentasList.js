@@ -6,22 +6,44 @@ import { CgAdd } from 'react-icons/cg';
 import { Button } from "components/ui";
 import { apiGetVentas } from 'services/VentasService';
 import VentasAdd from './VentasAdd';
-import VentasDialog from './VentasDialog';
+import VentasDialogDelete from './VentasDialogDelete';
+import { apiDeleteVenta } from 'services/VentasService';
 
 const VentasList = () => {
   const [ventasList, setVentasList] = useState([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
   const [selectedVenta, setSelectedVenta] = useState(null); 
   const [showList, setShowList] = useState(true);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useEffect(() => {
+    const fetchVentas = async () => {
+      const ventasResponse = await apiGetVentas();
+      setVentasList(ventasResponse.data);
+    };
+    fetchVentas();
+  }, []);
+
+  const handleDeleteComplete = async () => {
+    try {
+      await apiDeleteVenta(selectedVenta.id); 
+      const ventasResponse = await apiGetVentas();
+      setVentasList(ventasResponse.data);
+      
+    } catch (error) {
+      console.error('Error al eliminar la venta:', error);
+    } finally {
+      setShowConfirmation(false);
+      // window.location.reload(); esto lo vamos a cambiar por un dispatch porque no es reactivo
+    }
+  };
 
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
     const onView = () => {
       setSelectedVenta(row); 
+      setDeleteDialogOpen(true);
     };
 
     const onEdit = () => {
@@ -29,7 +51,8 @@ const VentasList = () => {
     }
 
     const onDelete = () => {
-
+      setSelectedVenta(row); 
+      setShowConfirmation(true);
     }
 
     return (
@@ -117,14 +140,6 @@ const VentasList = () => {
     }
   ];
   
-  const openDrawer = () => {
-
-  };
-
-  const handleDeleteSuccess = (id) => {
-
-  };
-
   const toggleView = () => {
     setShowList(!showList);
   };
@@ -157,14 +172,14 @@ const VentasList = () => {
       </div>
       
       {selectedVenta && (
-        <>
-          <VentasDialog
-            isOpen={viewDialogOpen}
-            onClose={() => setViewDialogOpen(false)}
-            venta={selectedVenta}
-          />
-        </>
+        <VentasDialogDelete
+          isOpen={showConfirmation}
+          onClose={() => setShowConfirmation(false)}
+          client={selectedVenta}
+          onDeleteComplete={handleDeleteComplete}
+        />
       )}
+      
     </>
   );
 };

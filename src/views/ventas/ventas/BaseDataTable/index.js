@@ -10,16 +10,16 @@ import { HiOutlineSearch } from 'react-icons/hi';
 import { injectReducer } from 'store/index';
 import reducer from './store';
 
-injectReducer('dataProveedores', reducer);
+injectReducer('dataVentas', reducer);
 
 const BaseDataTable = forwardRef((props, ref) => {
 	const { columns, reqUrl } = props;
 
 	const dispatch = useDispatch();
 
-	const data = useSelector((state) => state.dataProveedores.data.data);
-	const loading = useSelector((state) => state.dataProveedores.data.loading);
-	const { current_page, perPage, total, search, sort } = useSelector((state) => state.dataProveedores.data.tableData);
+	const data = useSelector((state) => state.dataVentas.data.data);
+	const loading = useSelector((state) => state.dataVentas.data.loading);
+	const { current_page, perPage, total, search, sort } = useSelector((state) => state.dataVentas.data.tableData);
 
 	const fetchData = useCallback(() => {
 		dispatch(getData({ reqParams: { current_page, perPage, sort, search }, reqUrl }));
@@ -74,7 +74,7 @@ const BaseDataTable = forwardRef((props, ref) => {
 				ref={ref}
 				className="max-w-md md:w-52"
 				size="sm"
-				placeholder="Buscar proveedor"
+				placeholder="Buscar venta"
 				prefix={<HiOutlineSearch className="text-lg" />}
 				onChange={handleInputChange}
 			/>
