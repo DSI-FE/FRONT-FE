@@ -33,7 +33,8 @@ const ComprasList = () => {
     }
 
     const onDelete = () => {
-
+      setSelectedCompra(row); 
+      setDeleteDialogOpen(true);
     }
 
     return (
@@ -146,6 +147,12 @@ const ComprasList = () => {
             isOpen={viewDialogOpen}
             onClose={() => setViewDialogOpen(false)}
             compra={selectedCompra}
+          />
+          <ComprasDialogDelete
+            isOpen={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            compra={selectedCompra}
+            onDeleteSuccess={handleDeleteSuccess}
           />
         </>
       )}

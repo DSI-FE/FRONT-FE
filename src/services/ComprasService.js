@@ -26,3 +26,11 @@ export async function apiCreateCompra(data) {
     data,
   });
 }
+
+  //Para obtener todas las compras
+  export async function apiDeleteCompra(id) {
+    return ApiService.fetchData({
+      url: `compras/delete/${id}`,
+      method: 'DELETE'
+    });
+  }
