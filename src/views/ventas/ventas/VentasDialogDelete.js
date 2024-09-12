@@ -1,15 +1,15 @@
 import React from 'react';
 import { Dialog, Button, Notification, toast } from 'components/ui';
-import { apiDeleteProveedor } from 'services/ProveedorService';
+import { apiDeleteVenta } from 'services/VentasService';
 
-const VentasDialogDelete = ({ isOpen, onClose, proveedor, onDeleteSuccess }) => {
+const VentasDialogDelete = ({ isOpen, onClose, venta, onDeleteSuccess }) => {
     const handleDelete = async () => {
         try {
-            const response = await apiDeleteProveedor(proveedor.id);
-            onDeleteSuccess(proveedor.id);
+            const response = await apiDeleteVenta(venta.id);
+            onDeleteSuccess(venta.id);
             const errorNotification = (
                 <Notification title="Error" type="danger">
-                    Ocurrió un error al eliminar el proveedor.
+                    Ocurrió un error al eliminar la venta.
                 </Notification>
             );
             toast.push(errorNotification);
@@ -17,7 +17,7 @@ const VentasDialogDelete = ({ isOpen, onClose, proveedor, onDeleteSuccess }) => 
         } catch (error) {
             const toastNotification = (
                 <Notification title="Completado" type="success">
-                    El proveedor se eliminó exitosamente.
+                    La venta se eliminó exitosamente.
                 </Notification>
             );
             toast.push(toastNotification);
@@ -31,7 +31,7 @@ const VentasDialogDelete = ({ isOpen, onClose, proveedor, onDeleteSuccess }) => 
             <h2 style={{ marginBottom: '25px', marginTop: '2px' }}>
                 Confirmar eliminación
             </h2>
-            <p>¿Estás seguro de que deseas eliminar el proveedor <strong>{proveedor.nombre}</strong>?</p>
+            <p>¿Estás seguro de que deseas eliminar la venta<strong>{venta.nombre}</strong>?</p>
             <div className="flex justify-end space-x-2 mt-4">
                 <Button size="sm" variant="solid" color="gray-500" onClick={onClose}>Cancelar</Button>
                 <Button size="sm" variant="solid" color="red-500" onClick={handleDelete}>Eliminar</Button>

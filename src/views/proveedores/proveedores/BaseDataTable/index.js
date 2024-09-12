@@ -92,11 +92,7 @@ const BaseDataTable = forwardRef((props, ref) => {
 				skeletonAvatarColumns={[0]}
 				skeletonAvatarProps={{ width: 28, height: 28 }}
 				loading={loading}
-<<<<<<< HEAD
-				pagingData={{ page, paginate, total, sort, search}}
-=======
 				pagingData={{ page, paginate, total, search, sort }}
->>>>>>> alfonsog
 				pageSizes={[5, 10, 25, 50, 100]}
 				onPaginationChange={onPaginationChange}
 				onSelectChange={onSelectChange}

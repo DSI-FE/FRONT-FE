@@ -7,25 +7,17 @@ import { Button } from "components/ui";
 import { apiGetClientes, apiDeleteCliente } from 'services/ClienteService';
 import ClienteDrawer from './ClienteDrawer';
 import DeleteDialog from './components/DeleteDialog/DeleteDialog';
-<<<<<<< HEAD
-=======
 import ClienteDialog from './ClienteDialog'; 
->>>>>>> alfonsog
+
 
 const ClienteList = () => {
   const [clientesList, setClientesList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-<<<<<<< HEAD
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null); 
-  const dispatch = useDispatch();
-=======
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); 
   
->>>>>>> alfonsog
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -42,24 +34,15 @@ const ClienteList = () => {
 
   const handleDeleteComplete = async () => {
     try {
-<<<<<<< HEAD
-      await apiDeleteCliente(selectedClient.id); // Llama a apiDeleteCliente para eliminar el cliente
-      const clientesResponse = await apiGetClientes();
-      setClientesList(clientesResponse.data);
-=======
       await apiDeleteCliente(selectedClient.id); 
       const clientesResponse = await apiGetClientes();
       setClientesList(clientesResponse.data);
       
->>>>>>> alfonsog
     } catch (error) {
       console.error('Error al eliminar el cliente:', error);
     } finally {
       setShowConfirmation(false);
-<<<<<<< HEAD
-=======
       window.location.reload();
->>>>>>> alfonsog
     }
   };
 
@@ -77,14 +60,10 @@ const ClienteList = () => {
       console.log(selectedCliente);
     };
 
-<<<<<<< HEAD
- 
-=======
     const onDelete = () => {
       setSelectedClient(row);
       setShowConfirmation(true);
     };
->>>>>>> alfonsog
 
     return (
       <div className='flex justify-center text-center space-x-4'>
@@ -150,23 +129,6 @@ const ClienteList = () => {
       cellClassName: 'text-center',
     }
   ];
-<<<<<<< HEAD
-  
-
-    const openDrawer = () => {
-      setIsDrawerOpen(true);
-    };
-
-    const closeDrawer = () => {
-      setIsDrawerOpen(false);
-    };
-  
-    const closeConfirmation = () => {
-      setShowConfirmation(false);
-    };
-  
-
-=======
 
   const openDrawer = () => {
     setSelectedCliente(null); 
@@ -174,7 +136,6 @@ const ClienteList = () => {
   };
 
   
->>>>>>> alfonsog
   return (
     <>
       <div className="flex justify-between items-center">
@@ -192,11 +153,7 @@ const ClienteList = () => {
       <div>
         <BaseDataTable columns={columns} reqUrl={'/clientes/listaclientes'} />
       </div>
-<<<<<<< HEAD
-      <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={closeDrawer} />
-=======
       <ClienteDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} cliente={selectedCliente} />
->>>>>>> alfonsog
       {selectedClient && (
         <DeleteDialog
           isOpen={showConfirmation}
@@ -205,8 +162,6 @@ const ClienteList = () => {
           onDeleteComplete={handleDeleteComplete}
         />
       )}
-<<<<<<< HEAD
-=======
       {selectedCliente && (
         <ClienteDialog
           isOpen={isDialogOpen}
@@ -214,7 +169,6 @@ const ClienteList = () => {
           cliente={selectedCliente}
         />
       )}
->>>>>>> alfonsog
     </>
   );
 };
