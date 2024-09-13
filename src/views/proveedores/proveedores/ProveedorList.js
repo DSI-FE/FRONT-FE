@@ -7,7 +7,7 @@ import { Button, Notification, toast } from "components/ui";
 import { apiGetProveedores, apiGetProveedorById } from 'services/ProveedorService';
 import ProveedorDrawer from './ProveedorDrawer';
 import ProveedorDrawerEdit from './ProveedorDrawerEdit';
-import ProveedorDialog from './ProveedorDialog'; 
+import ProveedorDialog from './ProveedorDialog';
 import ProveedorDialogDelete from './ProveedorDialogDelete';
 
 const ProveedorList = () => {
@@ -16,8 +16,8 @@ const ProveedorList = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
-  const [selectedProveedor, setSelectedProveedor] = useState(null); 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedProveedor, setSelectedProveedor] = useState(null);
 
   useEffect(() => {
     const fetchProveedores = async () => {
@@ -31,8 +31,8 @@ const ProveedorList = () => {
     const dispatch = useDispatch();
 
     const onView = () => {
-      setSelectedProveedor(row); 
-      setViewDialogOpen(true); 
+      setSelectedProveedor(row);
+      setViewDialogOpen(true);
     };
 
     const onEdit = () => {
@@ -41,8 +41,8 @@ const ProveedorList = () => {
     }
 
     const onDelete = () => {
-      setSelectedProveedor(row); 
-      setDeleteDialogOpen(true); 
+      setSelectedProveedor(row);
+      setDeleteDialogOpen(true);
     }
 
     return (
@@ -85,17 +85,17 @@ const ProveedorList = () => {
     },
     {
       header: 'NRC',
-      accessorKey: 'nrc', 
+      accessorKey: 'nrc',
       sortable: true,
     },
     {
       header: 'NIT',
-      accessorKey: 'nit', 
+      accessorKey: 'nit',
       sortable: true,
     },
     {
       header: 'Tipo de Proveedor',
-      accessorKey: 'tipo_proveedor.tipo', 
+      accessorKey: 'tipo_proveedor.tipo',
       sortable: true,
     },
     {
@@ -109,7 +109,7 @@ const ProveedorList = () => {
       cellClassName: 'text-center',
     }
   ];
-  
+
   const openDrawer = () => {
     setIsDrawerOpen(true);
   };
@@ -127,7 +127,7 @@ const ProveedorList = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-      <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}> Lista de proveedores</h2>
+        <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}> Lista de proveedores</h2>
         <Button
           onClick={openDrawer}
           icon={<CgAdd />}

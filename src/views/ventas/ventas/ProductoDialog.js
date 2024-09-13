@@ -12,7 +12,8 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
         iva: 0,
         total: 0,
         unidad: '',
-        unidad_id: 0
+        unidad_medida_id: 0,
+        producto_id: ''
     });
 
     const [listaProductos, setListaProductos] = useState([]);
@@ -37,40 +38,39 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
                 descripcion: productoBuscado.nombreProducto,
                 codigo: productoBuscado.id,
                 unidad: primeraUnidad.nombreUnidad,
-                unidad_id: primeraUnidad.id,
+                unidad_medida_id: primeraUnidad.id,
                 existencias: primeraUnidad.existencias,
                 precioUnitario: parseFloat(primeraUnidad.precioVenta),
                 cantidad: '',
                 total: ''
             }));
             setUnidadesDisponibles(productoBuscado.unidades);
+
         } else {
             setProducto(prevState => ({
                 ...prevState,
                 descripcion: '',
                 unidad: '',
                 existencias: 0,
-                precioUnitario: 0
+                precioUnitario: 0,
+                producto_id: 0
             }));
             setUnidadesDisponibles([]);
         }
     }
     };
     
-    
-    
-    
 
     const totalIva = (producto.precioUnitario * 0.13).toFixed(2);
     const totalConIva = ((producto.precioUnitario * producto.cantidad)).toFixed(2);
 
     const validateForm = () => {
-        const { codigo, descripcion, unidad_id, cantidad, precioUnitario } = producto;
-        if (!codigo || !descripcion || !unidad_id || !cantidad || precioUnitario <= 0) {
+        const { codigo, descripcion, unidad_medida_id, cantidad, precioUnitario } = producto;
+        if (!codigo || !descripcion || !unidad_medida_id || !cantidad || precioUnitario <= 0) {
             const missingFields = [];
             if (!codigo) missingFields.push('Código');
             if (!descripcion) missingFields.push('Nombre');
-            if (!unidad_id) missingFields.push('Unidad de medida');
+            if (!unidad_medida_id) missingFields.push('Unidad de medida');
             if (!cantidad) missingFields.push('Cantidad');
             if (precioUnitario <= 0) missingFields.push('Precio unitario');
 
@@ -137,11 +137,14 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
                 existencias: productoSeleccionado.unidades[0].existencias,
                 precioUnitario: productoSeleccionado.unidades[0].precioVenta,
                 cantidad: '',
-                total: ''
+                total: '',
+                producto_id: productoSeleccionado.unidades[0].producto_id
             });
             setUnidadesDisponibles(productoSeleccionado.unidades);
         }
     };
+
+   
 
     const handleUnidadChange = (selectedOption) => {
         const unidadSeleccionada = unidadesDisponibles.find(
@@ -151,7 +154,7 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
         if (unidadSeleccionada) {
             setProducto({
                 ...producto,
-                unidad_id: selectedOption.value,
+                unidad_medida_id: selectedOption.value,
                 unidad: selectedOption.label,
                 existencias: unidadSeleccionada.existencias,
                 precioUnitario: unidadSeleccionada.precioVenta
@@ -168,7 +171,7 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
             iva: 0,
             total: 0,
             unidad: '',
-            unidad_id: 0
+            unidad_medida_id: 0
         });
         setUnidadesDisponibles([]);
     };

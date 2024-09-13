@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Table, Card, Select, Notification, toast } from "components/ui";
 import { HiTrash } from 'react-icons/hi';
-import { apiCreateVenta } from 'services/VentasService';
+import { apiGetVentaBy, apiUpdateVentas } from 'services/VentasService';
 import ProductoDialog from './ProductoDialog';
 import { apiGetCondicion, apiGetDocumento, apiGetListaClientes } from 'services/DTEServices';
+import isDisabled from 'components/ui/DatePicker/tables/components/props/isDisabled';
+import { set } from 'lodash';
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
-const VentasAdd = () => {
+const VentasEdit = ({ventaId}) => {
     const [venta, setVenta] = useState({
+        id: '',
         fecha: '',
         nombre_cliente: '',
-        total_no_sujetas: '',
-        total_exentas: '',
+        total_no_sujetas: 0,
+        total_exentas: 0,
         total_gravadas: '',
         total_iva: '',
-        condicion: 1,
+        condicion: '',
         nombre_condicion: '',
         nombre_documento: '',
         tipo_documento: '',
         cliente_id: '',
         productos: []
     });
-
     const [productoDialogOpen, setProductoDialogOpen] = useState(false);
     const [productosList, setProductosList] = useState([]);
     const [listaClientes, setListaClientes] = useState([]);
@@ -31,7 +33,53 @@ const VentasAdd = () => {
     //boton
     //const [isDisabled, setIsDisabled] = useState(false);
 
+
     useEffect(() => {
+        //hacer la consulta de la api para una venta especifica
+        const fetchVenta = async (id) => {
+            try {
+                const response = await apiGetVentaBy(id);
+                const detalleVenta = response.data.data.detalles;
+                const ventaInfo = response.data.data.venta[0];
+                setVenta({
+                    fecha: ventaInfo.fecha,
+                    cliente_id: ventaInfo.cliente_id,
+                    nombre_cliente: ventaInfo.cliente_nombre,
+                    tipo_documento: ventaInfo.tipo_documento.id,
+                    nombre_documento: ventaInfo.tipo_documento.nombre,
+                    condicion: ventaInfo.condicion.id,
+                    nombre_condicion: ventaInfo.condicion.nombre,
+                    total: ventaInfo.total_pagar,
+                    productos: detalleVenta.map(detalle => ({
+                        producto_id: detalle.producto.producto_id,
+                        cantidad: detalle.cantidad,
+                        unidad_medida_id: detalle.producto.unidad_medida_id,
+                        precio: detalle.precio,
+                        iva: detalle.iva,
+                        total: detalle.total,
+                        cantidad: detalle.cantidad
+                    }))
+                });
+                //productos que se mostraran en la tabla
+                const productosTabla = detalleVenta.map(detalle => ({
+                    producto_id: detalle.producto.producto.id,
+                    codigo: detalle.producto.producto_id, //proyecto_id
+                    cantidad: detalle.cantidad,
+                    unidad_medida_id: detalle.producto.unidad_medida_id,
+                    precio: detalle.precio,
+                    iva: detalle.iva,
+                    total: detalle.total,
+                    cantidad: detalle.cantidad,
+                    descripcion: detalle.producto.nombre_producto,
+                    unidad: detalle.producto.unidad_medida,
+                    precioUnitario: detalle.producto.precioVenta
+                }));
+                setProductosList(productosTabla);
+            } catch (error) {
+                console.log("Error fetching venta", error);
+            }
+        };
+
         const fetchClientes = async () => {
             try {
                 const response = await apiGetListaClientes();
@@ -78,7 +126,14 @@ const VentasAdd = () => {
             }
         };
         fetchDocumento();
-    }, []);
+
+        //prueba
+        if(ventaId){
+            fetchVenta(ventaId);
+        }
+
+    }, [ventaId]);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -172,6 +227,7 @@ const VentasAdd = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+
         //Preparar los datos antes de enviar
         const ventaData = {
             fecha: venta.fecha,
@@ -184,8 +240,8 @@ const VentasAdd = () => {
             condicion: venta.condicion,
             tipo_documento: venta.tipo_documento,
             productos: productosList.map(producto => ({
-                producto_id: producto.producto_id,
-                unidad_medida_id: producto.unidad_medida_id,
+                producto_id: producto.producto_id, //existentes
+                unidad_medida_id: producto.unidad_medida_id, //existentes
                 precio: producto.precioUnitario,
                 iva: producto.iva,
                 total: producto.total,
@@ -194,20 +250,21 @@ const VentasAdd = () => {
         };
 
         try {
-            await apiCreateVenta(ventaData);
+            await apiUpdateVentas(ventaId, ventaData);
             const toastNotification = (
                 <Notification title="Completado" type="success">
-                    La venta se guardó exitosamente.
+                    La venta se actualizó exitosamente.
                 </Notification>
             );
             toast.push(toastNotification);
-          //  clearFields();
+           // clearFields();
             //prueba del boton
            // setIsDisabled(true)
+           console.log(ventaData);
         } catch (error) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
-                    Ocurrió un error al guardar la venta.
+                    Ocurrió un error al actualizar la venta.
                 </Notification>
             );
             toast.push(errorNotification);
@@ -372,7 +429,7 @@ const VentasAdd = () => {
                     className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center border border-black"
                     onClick={handleSubmit}
                     >
-                    REGISTRAR PEDIDO
+                    MODIFICAR PEDIDO
                 </Button>
 
                 <Button
@@ -395,4 +452,5 @@ const VentasAdd = () => {
         </div>
     );
 };
-export default VentasAdd;
+
+export default VentasEdit;

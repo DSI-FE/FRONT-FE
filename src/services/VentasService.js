@@ -38,7 +38,7 @@ export async function apiDeleteVenta(id) {
 //Para upd una venta por su id
 export async function apiUpdateVentas(id, data) {
     return ApiService.fetchData({
-      url: `ventas/ventasUpd/${id}`,
+      url: `ventas/ventaUpd/${id}`,
       method: 'PATCH',
       data,
     });

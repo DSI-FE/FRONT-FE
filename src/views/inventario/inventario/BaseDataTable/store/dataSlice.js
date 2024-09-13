@@ -14,14 +14,14 @@ export const initialTableData =
     search: ''
 }
 
-export const getData = createAsyncThunk('dataProveedores/getData', async (data) => {
+export const getData = createAsyncThunk('dataInventario/getData', async (data) => {
     data.reqParams = data.reqParams ? data.reqParams : { ...initialTableData }
     return await apiGetData(data.reqParams, data.reqUrl);
 })
 
 const dataSlice = createSlice(
     {
-        name: 'dataProveedores',
+        name: 'dataInventario',
         initialState:
         {
             url: '',
