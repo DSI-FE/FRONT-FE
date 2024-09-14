@@ -27,10 +27,17 @@ export async function apiCreateCompra(data) {
   });
 }
 
-  //Para obtener todas las compras
+  //Para eliminar una compra
   export async function apiDeleteCompra(id) {
     return ApiService.fetchData({
       url: `compras/delete/${id}`,
       method: 'DELETE'
     });
   }
+  export async function apiUpdateCompra(id, data) {
+    return ApiService.fetchData({
+        url: `compras/comprasUpd/${id}`,
+        method: 'PATCH',
+        data,
+    });
+}

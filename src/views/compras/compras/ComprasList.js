@@ -10,6 +10,7 @@ import ComprasDrawerEdit from './ComprasDrawerEdit';
 import ComprasDialog from './ComprasDialog'; 
 import ComprasDialogDelete from './ComprasDialogDelete';
 import ComprasAdd from './ComprasAdd'; 
+import ComprasEdit from './ComprasEdit';
 
 const ComprasList = () => {
   const [comprasList, setComprasList] = useState([]);
@@ -19,6 +20,7 @@ const ComprasList = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
   const [selectedCompra, setSelectedCompra] = useState(null); 
   const [showList, setShowList] = useState(true);
+  const [editMode, setEditMode] = useState(false); 
 
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
@@ -29,7 +31,9 @@ const ComprasList = () => {
     };
 
     const onEdit = () => {
-
+      setSelectedCompra(row);  // Guardar la venta seleccionada
+      setEditMode(true);  // Activar el modo de edición
+      setShowList(false); 
     }
 
     const onDelete = () => {
@@ -118,7 +122,8 @@ const ComprasList = () => {
     <>
       <div className="flex justify-between items-center">
         <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
-          {showList ? "Lista de compras" : "Agregar nueva compra"}
+          {showList && !editMode ? "Lista de compras" : editMode ? "Editar compra" : "Agregar nueva compra"}
+
         </h2>
         <div>
           <Button
@@ -128,19 +133,23 @@ const ComprasList = () => {
             variant="solid"
             className="flex items-center mr-2"
           >
-            {showList ? "Agregar nueva compra" : "Listar compras"}
+            {showList && !editMode ? "Agregar nueva compra" : "Listar compras"}
           </Button>
         </div>
       </div>
       
       <div>
-        {showList ? (
+        {showList && !editMode ? (
           <BaseDataTable columns={columns} reqUrl={'/compras/compras'} />
+        ) : editMode ? (
+          <ComprasEdit 
+          compraSelected={selectedCompra}
+          /> // Mostrar el formulario de edición
         ) : (
           <ComprasAdd />
         )}
       </div>
-      
+
       {selectedCompra && (
         <>
           <ComprasDialog
