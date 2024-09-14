@@ -183,18 +183,18 @@
                 await apiUpdateCompra(compraSelected.id, compraData);
                 const toastNotification = (
                     <Notification title="Completado" type="success">
-                        La compra se guardó exitosamente.
+                        La compra se actualizó exitosamente.
                     </Notification>
                 );
                 toast.push(toastNotification);
             } catch (error) {
                 const errorNotification = (
                     <Notification title="Error" type="danger">
-                        Ocurrió un error al guardar la compra.
+                        Ocurrió un error al actualizar la compra.
                     </Notification>
                 );
                 toast.push(errorNotification);
-                console.error('Error al guardar la compra:', error);
+                console.error('Error al actualizar la compra:', error);
             }
 
             clearFields();
