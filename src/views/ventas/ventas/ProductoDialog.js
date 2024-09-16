@@ -138,7 +138,7 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
                 precioUnitario: productoSeleccionado.unidades[0].precioVenta,
                 cantidad: '',
                 total: '',
-                producto_id: productoSeleccionado.unidades[0].producto_id
+                producto_id: productoSeleccionado.id
             });
             setUnidadesDisponibles(productoSeleccionado.unidades);
         }

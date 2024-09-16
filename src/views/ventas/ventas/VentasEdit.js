@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Table, Card, Select, Notification, toast } from "components/ui";
-import { HiTrash } from 'react-icons/hi';
+import { HiTrash, HiPencil } from 'react-icons/hi';
 import { apiGetVentaBy, apiUpdateVentas } from 'services/VentasService';
 import ProductoDialog from './ProductoDialog';
 import { apiGetCondicion, apiGetDocumento, apiGetListaClientes } from 'services/DTEServices';
-import isDisabled from 'components/ui/DatePicker/tables/components/props/isDisabled';
-import { set } from 'lodash';
+import CambioDialog from './CambioDialog';
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
-const VentasEdit = ({ventaId}) => {
+const VentasEdit = ({ ventaId }) => {
     const [venta, setVenta] = useState({
         id: '',
         fecha: '',
@@ -26,14 +25,14 @@ const VentasEdit = ({ventaId}) => {
         productos: []
     });
     const [productoDialogOpen, setProductoDialogOpen] = useState(false);
+    const [cambioDialogOpen, setCambioDialogOpen] = useState(false);
     const [productosList, setProductosList] = useState([]);
     const [listaClientes, setListaClientes] = useState([]);
     const [listaCondicion, setListaCondicion] = useState([]);
     const [listaDocumentos, setListaDocumentos] = useState([]);
-    //boton
-    //const [isDisabled, setIsDisabled] = useState(false);
-
-
+    const [enabledFacturar, setEnabledFacturar] = useState(false);
+    const [enabledComponents, setEnabledComponents] = useState(true) // inician los componentes deshabiliatdos
+ 
     useEffect(() => {
         //hacer la consulta de la api para una venta especifica
         const fetchVenta = async (id) => {
@@ -41,6 +40,7 @@ const VentasEdit = ({ventaId}) => {
                 const response = await apiGetVentaBy(id);
                 const detalleVenta = response.data.data.detalles;
                 const ventaInfo = response.data.data.venta[0];
+
                 setVenta({
                     fecha: ventaInfo.fecha,
                     cliente_id: ventaInfo.cliente_id,
@@ -57,22 +57,20 @@ const VentasEdit = ({ventaId}) => {
                         precio: detalle.precio,
                         iva: detalle.iva,
                         total: detalle.total,
-                        cantidad: detalle.cantidad
                     }))
                 });
                 //productos que se mostraran en la tabla
                 const productosTabla = detalleVenta.map(detalle => ({
                     producto_id: detalle.producto.producto.id,
-                    codigo: detalle.producto.producto_id, //proyecto_id
+                    codigo: detalle.producto.producto.id,
                     cantidad: detalle.cantidad,
                     unidad_medida_id: detalle.producto.unidad_medida_id,
                     precio: detalle.precio,
                     iva: detalle.iva,
                     total: detalle.total,
-                    cantidad: detalle.cantidad,
                     descripcion: detalle.producto.nombre_producto,
                     unidad: detalle.producto.unidad_medida,
-                    precioUnitario: detalle.producto.precioVenta
+                    precioUnitario: detalle.precio.toFixed(2)
                 }));
                 setProductosList(productosTabla);
             } catch (error) {
@@ -127,11 +125,10 @@ const VentasEdit = ({ventaId}) => {
         };
         fetchDocumento();
 
-        //prueba
-        if(ventaId){
+        if (ventaId) {
             fetchVenta(ventaId);
         }
-
+        
     }, [ventaId]);
 
 
@@ -160,6 +157,10 @@ const VentasEdit = ({ventaId}) => {
 
     const agregarProducto = (nuevoProducto) => {
         setProductosList([...productosList, nuevoProducto]);
+    };
+
+    const generarVenta = () => {
+        
     };
 
     const eliminarProducto = (index) => {
@@ -192,7 +193,10 @@ const VentasEdit = ({ventaId}) => {
     };
 
     const facturar = () => {
-        //estara disponible proximamente
+        //Limpia los campos y habilita los botones
+      //  clearFields();
+      setCambioDialogOpen(true)
+
     }
 
     //Select del tipo de documento
@@ -223,9 +227,17 @@ const VentasEdit = ({ventaId}) => {
         setProductosList([]);
     };
 
+    const onEdit = () => {
+        setEnabledComponents(!enabledComponents);
+        setEnabledFacturar(true);
+    }
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setEnabledComponents(!enabledComponents);
+        setEnabledFacturar(false);
+
 
 
         //Preparar los datos antes de enviar
@@ -257,10 +269,9 @@ const VentasEdit = ({ventaId}) => {
                 </Notification>
             );
             toast.push(toastNotification);
-           // clearFields();
+            // clearFields();
             //prueba del boton
-           // setIsDisabled(true)
-           console.log(ventaData);
+            // setIsDisabled(true)
         } catch (error) {
             const errorNotification = (
                 <Notification title="Error" type="danger">
@@ -268,8 +279,6 @@ const VentasEdit = ({ventaId}) => {
                 </Notification>
             );
             toast.push(errorNotification);
-            console.error('Error al actualizar la venta:', error);
-            console.log(ventaData)
         }
     };
 
@@ -297,6 +306,7 @@ const VentasEdit = ({ventaId}) => {
                             name="fecha"
                             value={venta.fecha}
                             onChange={handleInputChange}
+                            disabled={enabledComponents}
                         />
                     </div>
                     <div>
@@ -309,6 +319,7 @@ const VentasEdit = ({ventaId}) => {
                                 value: con.id,
                                 label: con.nombre
                             }))}
+                            isDisabled={enabledComponents}
                         />
                     </div>
                     <div>
@@ -321,6 +332,7 @@ const VentasEdit = ({ventaId}) => {
                                 value: con.id,
                                 label: con.nombre
                             }))}
+                            isDisabled={enabledComponents}
                         />
                     </div>
                 </div>
@@ -335,6 +347,7 @@ const VentasEdit = ({ventaId}) => {
                             name="cliente_id"
                             value={venta.cliente_id}
                             onChange={handleInputChange}
+                            disabled={enabledComponents}
                         />
                     </div>
 
@@ -348,6 +361,7 @@ const VentasEdit = ({ventaId}) => {
                                 value: proveedor.id,
                                 label: `${proveedor.nombres} ${proveedor.apellidos}`
                             }))}
+                            isDisabled={enabledComponents}
                         />
                     </div>
                 </div>
@@ -359,6 +373,7 @@ const VentasEdit = ({ventaId}) => {
                         onClick={() => setProductoDialogOpen(true)}
                         size="sm"
                         variant="solid"
+                        style={{ display: !enabledComponents ? 'block' : 'none' }}
                         className="flex items-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 border border-black"
                     >
                         Agregar producto
@@ -395,6 +410,7 @@ const VentasEdit = ({ventaId}) => {
                                         size="xs"
                                         variant="solid"
                                         icon={<HiTrash />}
+                                        style={{ display: !enabledComponents ? 'block' : 'none' }}
                                         onClick={() => eliminarProducto(index)}
                                     />
                                 </Td>
@@ -422,31 +438,46 @@ const VentasEdit = ({ventaId}) => {
                 </div>
             </Card>
 
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row items-center gap-4 mt-6">
                 <Button
                     size="sm"
                     variant="solid"
-                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center border border-black"
-                    onClick={handleSubmit}
-                    >
+                    disabled={enabledComponents}
+                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 w-40 text-center border border-black"
+                    onClick={handleSubmit}>
                     MODIFICAR PEDIDO
                 </Button>
-
+                <Button
+                    title='Editar datos'
+                    size="sm"
+                    variant="solid"
+                    className="flex items-center justify-center bg-blue-500 hover:bg-blue-400 active:bg-blue-700 w-10 text-center border border-black"
+                    onClick={onEdit}
+                    style={{ display: enabledComponents ? 'block' : 'none' }}
+                    icon={< HiPencil />}
+                />
                 <Button
                     size="sm"
                     variant="solid"
-                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center border border-black"
-                    onClick={facturar}>
+                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 w-40 text-center border border-black ml-auto"
+                    onClick={facturar}
+                    disabled={enabledFacturar}
+                >
                     FACTURAR VENTA
                 </Button>
             </div>
-
-
-
             <ProductoDialog
                 isOpen={productoDialogOpen}
                 onClose={() => setProductoDialogOpen(false)}
                 onSave={agregarProducto}
+            />
+            <CambioDialog
+                isOpen={cambioDialogOpen}
+                onClose={() => setCambioDialogOpen(false)}
+                onSave={generarVenta}
+                vVenta={venta}
+                ventaId={ventaId}
+                limpiarCampos={clearFields}
             />
 
         </div>

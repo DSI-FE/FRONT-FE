@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Table, Card, Select, Notification, toast } from "components/ui";
-import { HiTrash } from 'react-icons/hi';
-import { apiCreateVenta } from 'services/VentasService';
+import { HiTrash, HiPencil } from 'react-icons/hi';
+import { apiCreateVenta, apiUpdateVentas } from 'services/VentasService';
 import ProductoDialog from './ProductoDialog';
 import { apiGetCondicion, apiGetDocumento, apiGetListaClientes } from 'services/DTEServices';
+import CambioDialog from './CambioDialog';
+
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
 const VentasAdd = () => {
     const [venta, setVenta] = useState({
+        id: 0,
         fecha: '',
         nombre_cliente: '',
         total_no_sujetas: '',
@@ -24,12 +27,17 @@ const VentasAdd = () => {
     });
 
     const [productoDialogOpen, setProductoDialogOpen] = useState(false);
+    const [cambioDialogOpen, setCambioDialogOpen] = useState(false);
     const [productosList, setProductosList] = useState([]);
     const [listaClientes, setListaClientes] = useState([]);
     const [listaCondicion, setListaCondicion] = useState([]);
     const [listaDocumentos, setListaDocumentos] = useState([]);
-    //boton
-    //const [isDisabled, setIsDisabled] = useState(false);
+    const [enabledFacturar, setEnabledFacturar] = useState(true);
+    const [visibilityEditar, setVisibilityEditar] = useState(false);
+    const [enabledComponents, setEnabledComponents] = useState(false)
+    const [accion, setAccion] = useState('registrar');
+    const [ventaId, setVentaId] = useState([]);
+    const [id, setId] = useState([]);
 
     useEffect(() => {
         const fetchClientes = async () => {
@@ -101,10 +109,13 @@ const VentasAdd = () => {
                 venta.nombre_cliente = ''
             }
         }
+
     };
 
     const agregarProducto = (nuevoProducto) => {
         setProductosList([...productosList, nuevoProducto]);
+    };
+    const generarVenta = () => {
     };
 
     const eliminarProducto = (index) => {
@@ -138,7 +149,23 @@ const VentasAdd = () => {
 
     const facturar = () => {
         //estara disponible proximamente
+        //Limpia los campos y habilita los botones
+       // clearFields();
+       // setVisibilityEditar(false)
+       // habilitarComponentes()
+       setCambioDialogOpen(true)
     }
+
+    const onEdit = () => {
+        setEnabledComponents(false)
+        setAccion('modificar');
+        setEnabledFacturar(true);
+
+    }
+
+    const habilitarComponentes = () => {
+        setEnabledComponents(!enabledComponents)
+    };
 
     //Select del tipo de documento
     const handleDocumentoChange = (selectedOption) => {
@@ -174,6 +201,7 @@ const VentasAdd = () => {
 
         //Preparar los datos antes de enviar
         const ventaData = {
+            id: venta.id,
             fecha: venta.fecha,
             total_no_sujetas: 0,
             total_exentas: 0,
@@ -192,27 +220,50 @@ const VentasAdd = () => {
                 cantidad: producto.cantidad
             }))
         };
-
-        try {
-            await apiCreateVenta(ventaData);
-            const toastNotification = (
-                <Notification title="Completado" type="success">
-                    La venta se guardó exitosamente.
-                </Notification>
-            );
-            toast.push(toastNotification);
-          //  clearFields();
-            //prueba del boton
-           // setIsDisabled(true)
-        } catch (error) {
-            const errorNotification = (
-                <Notification title="Error" type="danger">
-                    Ocurrió un error al guardar la venta.
-                </Notification>
-            );
-            toast.push(errorNotification);
-            console.error('Error al actualizar la venta:', error);
-            console.log(ventaData)
+        if (accion === 'registrar') {
+            try {
+                const response = await apiCreateVenta(ventaData);
+                const id = response.data.id;
+                setVentaId(id);
+                const toastNotification = (
+                    <Notification title="Completado" type="success">
+                        La venta se guardó exitosamente.
+                    </Notification>
+                );
+                toast.push(toastNotification);
+                setEnabledFacturar(false);
+                setVisibilityEditar(true)
+                //deshabilita componentes
+                habilitarComponentes()
+                setEnabledComponents(true)
+            } catch (error) {
+                const errorNotification = (
+                    <Notification title="Error" type="danger">
+                        Ocurrió un error al guardar la venta.
+                    </Notification>
+                );
+                toast.push(errorNotification);
+            }
+        } else if (accion === 'modificar') {
+            setAccion('registrar');
+            setEnabledFacturar(false);
+            try {
+                await apiUpdateVentas(ventaId, ventaData);
+                const toastNotification = (
+                    <Notification title="Completado" type="success">
+                        La venta se actualizó exitosamente.
+                    </Notification>
+                );
+                toast.push(toastNotification);
+                setEnabledComponents(true);
+            } catch (error) {
+                const errorNotification = (
+                    <Notification title="Error" type="danger">
+                        Ocurrió un error al actualizar la venta.
+                    </Notification>
+                );
+                toast.push(errorNotification);
+            }
         }
     };
 
@@ -229,6 +280,7 @@ const VentasAdd = () => {
         }));
     }, [productosList]);
 
+
     return (
         <div>
             <Card headerClass="bg-gray-200" header="Detalles de la venta" className="mb-4 border-blue-600 text-black">
@@ -240,6 +292,7 @@ const VentasAdd = () => {
                             name="fecha"
                             value={venta.fecha}
                             onChange={handleInputChange}
+                            disabled={enabledComponents}
                         />
                     </div>
                     <div>
@@ -252,6 +305,7 @@ const VentasAdd = () => {
                                 value: con.id,
                                 label: con.nombre
                             }))}
+                            isDisabled={enabledComponents}
                         />
                     </div>
                     <div>
@@ -264,6 +318,7 @@ const VentasAdd = () => {
                                 value: con.id,
                                 label: con.nombre
                             }))}
+                            isDisabled={enabledComponents}
                         />
                     </div>
                 </div>
@@ -278,6 +333,7 @@ const VentasAdd = () => {
                             name="cliente_id"
                             value={venta.cliente_id}
                             onChange={handleInputChange}
+                            disabled={enabledComponents}
                         />
                     </div>
 
@@ -291,6 +347,7 @@ const VentasAdd = () => {
                                 value: proveedor.id,
                                 label: `${proveedor.nombres} ${proveedor.apellidos}`
                             }))}
+                            isDisabled={enabledComponents}
                         />
                     </div>
                 </div>
@@ -303,6 +360,7 @@ const VentasAdd = () => {
                         size="sm"
                         variant="solid"
                         className="flex items-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 border border-black"
+                        style={{ display: !enabledComponents ? 'block' : 'none' }}
                     >
                         Agregar producto
                     </Button>
@@ -338,6 +396,7 @@ const VentasAdd = () => {
                                         size="xs"
                                         variant="solid"
                                         icon={<HiTrash />}
+                                        style={{ display: !enabledComponents ? 'block' : 'none' }}
                                         onClick={() => eliminarProducto(index)}
                                     />
                                 </Td>
@@ -365,31 +424,47 @@ const VentasAdd = () => {
                 </div>
             </Card>
 
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row items-center gap-4 mt-6">
                 <Button
                     size="sm"
                     variant="solid"
-                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center border border-black"
+                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 w-40 text-center border border-black"
                     onClick={handleSubmit}
-                    >
-                    REGISTRAR PEDIDO
+                    disabled={enabledComponents}
+                >
+                    {accion === 'registrar' ? 'REGISTRAR PEDIDO' : 'MODIFICAR VENTA'}
                 </Button>
-
+                <Button
+                    title='Editar datos'
+                    size="sm"
+                    variant="solid"
+                    className="flex items-center justify-center bg-blue-500 hover:bg-blue-400 active:bg-blue-700 w-10 text-center border border-black"
+                    onClick={onEdit}
+                    style={{ display: visibilityEditar ? 'block' : 'none' }}
+                    icon={< HiPencil />}
+                />
                 <Button
                     size="sm"
                     variant="solid"
-                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 mt-6 w-40 text-center border border-black"
-                    onClick={facturar}>
+                    className="flex items-center justify-center bg-green-500 hover:bg-green-400 active:bg-green-700 w-40 text-center border border-black ml-auto"
+                    onClick={facturar}
+                    disabled={enabledFacturar}
+                >
                     FACTURAR VENTA
                 </Button>
             </div>
-
-
-
             <ProductoDialog
                 isOpen={productoDialogOpen}
                 onClose={() => setProductoDialogOpen(false)}
                 onSave={agregarProducto}
+            />
+            <CambioDialog
+                isOpen={cambioDialogOpen}
+                onClose={() => setCambioDialogOpen(false)}
+                onSave={generarVenta}
+                vVenta={venta}
+                ventaId={ventaId}
+                limpiarCampos={clearFields}
             />
 
         </div>

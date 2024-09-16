@@ -1,49 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import BaseDataTable from './BaseDataTable';
-import { useDispatch } from 'react-redux';
-import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
+import { HiTrash, HiEye } from 'react-icons/hi';
 import { TbFileDownload } from "react-icons/tb";
 import { CgAdd } from 'react-icons/cg';
 import { Button, Notification, toast } from "components/ui";
 import { apiGetVentas } from 'services/VentasService';
 import VentasEdit from './VentasEdit';
 import VentasAdd from './VentasAdd';
-import VentasDrawer from './VentasDrawer';
-//import VentasDrawerEdit from './VentasDrawerEdit';
 import VentasDialog from './VentasDialog';
 import VentasDialogDelete from './VentasDialogDelete';
-import { set } from 'lodash';
+
 
 const VentasList = () => {
   const [ventaList, setVentaList] = useState([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedVenta, setSelectedVenta] = useState(null);
   const [showList, setShowList] = useState(true);
-  const [editMode, setEditMode] = useState(false); 
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchVenta = async () => {
       const ventaResponse = await apiGetVentas();
       setVentaList(ventaResponse.data);
+
+
+      /* Esto es solo mientras tanto, aqui va ir la factura */
+
+
     };
     fetchVenta();
   }, []);
 
   const BotonesOpcion = ({ row }) => {
-    const dispatch = useDispatch();
-
-    const onView = () => {
-      setSelectedVenta(row);
-      setViewDialogOpen(true);
-    };
 
     const onEdit = () => {
       setSelectedVenta(row);  // Guardar la venta seleccionada
       setEditMode(true);  // Activar el modo de edición
-      setShowList(false); 
+      setShowList(false);
     };
 
     const onDelete = () => {
@@ -52,8 +47,7 @@ const VentasList = () => {
     };
 
     const descargarFactura = () => {
-      //esta es una prueba, pero asi debe ser, se debe abrir el pdf con la factura
-      window.open('https://drive.google.com/file/d/1q431biYg10yYWVjimcQppvvUdqJL6Nn5/view?usp=sharing', '_blank', 'width=800,height=600');
+  
 
     };
 
@@ -73,10 +67,10 @@ const VentasList = () => {
         ) : (
           <>
             <Button
-              title='Editar datos'
+              title='Ver pedido'
               size="xs"
               variant="solid"
-              icon={<HiPencil />}
+              icon={<HiEye />}
               onClick={onEdit}
             />
             <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
@@ -86,7 +80,6 @@ const VentasList = () => {
               icon={<HiTrash />}
               onClick={onDelete}
             />
-            {/* Otros botones que aparecen si el estado no es "Finalizada" */}
           </>
         )}
       </div>
@@ -142,9 +135,6 @@ const VentasList = () => {
     }
   ];
 
-  const openDrawer = () => {
-    setIsDrawerOpen(true);
-  };
 
   const handleDeleteSuccess = (id) => {
     setVentaList(ventaList.filter(venta => venta.id !== id));
@@ -158,14 +148,14 @@ const VentasList = () => {
 
   const toggleView = () => {
     setShowList(!showList);
-    setEditMode(false); 
+    setEditMode(false);
   };
 
   return (
     <>
       <div className="flex justify-between items-center ">
         <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
-          {showList && !editMode ? "Lista de ventas" : editMode ? "Editar venta" : "Agregar nueva venta"}
+          {showList && !editMode ? "Lista de ventas" : editMode ? "Detallles de la venta" : "Agregar nueva venta"}
         </h2>
         <div>
           <Button
@@ -184,9 +174,9 @@ const VentasList = () => {
         {showList && !editMode ? (
           <BaseDataTable columns={columns} reqUrl={'/ventas/ventas'} />
         ) : editMode ? (
-          <VentasEdit 
-          venta={selectedVenta} 
-          ventaId={selectedVenta.id} 
+          <VentasEdit
+            venta={selectedVenta}
+            ventaId={selectedVenta.id}
           /> // Mostrar el formulario de edición
         ) : (
           <VentasAdd />
@@ -200,7 +190,7 @@ const VentasList = () => {
             onClose={() => setViewDialogOpen(false)}
             venta={selectedVenta}
           />
-          
+
           <VentasDialogDelete
             isOpen={deleteDialogOpen}
             onClose={() => setDeleteDialogOpen(false)}

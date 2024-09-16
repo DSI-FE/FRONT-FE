@@ -32,3 +32,27 @@ export async function apiGetListaProveedores() {
       method: 'GET',
     });
   }
+
+  // Para crear un dte
+export async function apiCreateDTE(id) {
+  return ApiService.fetchData({
+    url: `dte/adddte/${id}`,
+    method: 'POST',
+  });
+}
+
+  //Para get el dte
+  export async function apiGetDTE(id) {
+    return ApiService.fetchData({
+      url: `dte/dte/${id}`,
+      method: 'GET',
+    });
+  }
+
+  //Para get el dte por id de venta
+  export async function apiGetFactura(id) {
+    return ApiService.fetchData({
+      url: `dte/facturadte/${id}`,
+      method: 'GET',
+    });
+  }
