@@ -7,8 +7,7 @@ import { Button, Notification, toast } from "components/ui";
 import { apiGetVentas } from 'services/VentasService';
 import VentasEdit from './VentasEdit';
 import VentasAdd from './VentasAdd';
-import VentasDialogDelete from './VentasDialogDelete';
-import { apiDeleteVenta } from 'services/VentasService';
+import VentasDialog from './VentasDialog';
 import VentasDialogDelete from './VentasDialogDelete';
 
 
@@ -19,29 +18,6 @@ const VentasList = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedVenta, setSelectedVenta] = useState(null);
   const [showList, setShowList] = useState(true);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-
-  useEffect(() => {
-    const fetchVentas = async () => {
-      const ventasResponse = await apiGetVentas();
-      setVentasList(ventasResponse.data);
-    };
-    fetchVentas();
-  }, []);
-
-  const handleDeleteComplete = async () => {
-    try {
-      await apiDeleteVenta(selectedVenta.id); 
-      const ventasResponse = await apiGetVentas();
-      setVentasList(ventasResponse.data);
-      
-    } catch (error) {
-      console.error('Error al eliminar la venta:', error);
-    } finally {
-      setShowConfirmation(false);
-      // window.location.reload(); esto lo vamos a cambiar por un dispatch porque no es reactivo
-    }
-  };
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
