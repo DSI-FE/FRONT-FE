@@ -4,13 +4,13 @@ import ApiService from "./ApiService";
 
 //Para obtener todas las ventas
 export async function apiGetVentas() {
-    return ApiService.fetchData({
-      url: 'ventas/ventas',
-      method: 'GET',
-    });
-  }
+  return ApiService.fetchData({
+    url: 'ventas/ventas',
+    method: 'GET',
+  });
+}
 
-  //Para obtener ventas por id
+//Para obtener ventas por id
 export async function apiGetVentaBy(id) {
   return ApiService.fetchData({
     url: `ventas/detalleventa/${id}`,
@@ -29,17 +29,26 @@ export async function apiCreateVenta(data) {
 
 //para borrar una venta
 export async function apiDeleteVenta(id) {
-    return ApiService.fetchData({
-      url: `ventas/delete/${id}`,
-      method: 'DELETE',
-    });
-  }
+  return ApiService.fetchData({
+    url: `ventas/delete/${id}`,
+    method: 'DELETE',
+  });
+}
 
 //Para upd una venta por su id
 export async function apiUpdateVentas(id, data) {
-    return ApiService.fetchData({
-      url: `ventas/ventaUpd/${id}`,
-      method: 'PATCH',
-      data,
-    });
-  }
+  return ApiService.fetchData({
+    url: `ventas/ventaUpd/${id}`,
+    method: 'PATCH',
+    data,
+  });
+}
+
+//Para descargar la factura en PDF de una venta por su id
+export async function apiDownloadFactura(id) {
+  return ApiService.fetchData({
+    url: `ventas/${id}/factura`,
+    method: 'GET',
+    responseType: 'blob',
+  });
+}
