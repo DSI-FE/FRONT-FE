@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, Input, Button, Notification, toast } from "components/ui";
+import { Dialog, Input, Button, Notification, toast, Spinner } from "components/ui";
 import { apiCreateDTE } from 'services/DTEServices';
 import Ticket from './Ticket';
+
 
 const CambioDialog = ({ isOpen, onClose, vVenta, ventaId, limpiarCampos }) => {
     const total = vVenta.total;
     const [mostrarTicket, setMostrarTicket] = useState(false);
     const [dteId, setDTEId] = useState(null);
-
     const [datos, setDatos] = useState({
         efectivo: '',
         cobrar: total,
         cambio: '',
     });
+    const [cargando, setCargando] = useState(false); // Estado para el spinner
 
     useEffect(() => {
         if (ventaId) {
@@ -49,6 +50,7 @@ const CambioDialog = ({ isOpen, onClose, vVenta, ventaId, limpiarCampos }) => {
     };
 
     const handleFinalizarVenta = async () => {
+        setCargando(true); // Iniciar carga
         try {
             const response = await apiCreateDTE(ventaId);
             const id = response.data.data.id;
@@ -60,7 +62,6 @@ const CambioDialog = ({ isOpen, onClose, vVenta, ventaId, limpiarCampos }) => {
                 </Notification>
             );
             toast.push(toastNotification);
-            // Mostrar el ticket
             setMostrarTicket(true);
         } catch (error) {
             const errorNotification = (
@@ -69,6 +70,8 @@ const CambioDialog = ({ isOpen, onClose, vVenta, ventaId, limpiarCampos }) => {
                 </Notification>
             );
             toast.push(errorNotification);
+        } finally {
+            setCargando(false); // Finalizar carga
         }
     };
 
@@ -117,15 +120,19 @@ const CambioDialog = ({ isOpen, onClose, vVenta, ventaId, limpiarCampos }) => {
                     </div>
 
                     <div className="flex justify-end mt-4">
-                        <Button variant="solid" onClick={handleFinalizarVenta}>
-                            Finalizar venta
+                        <Button variant="solid" onClick={handleFinalizarVenta} disabled={cargando}>
+                            {cargando ? 'Generando...' : 'Finalizar venta'}
                         </Button>
                     </div>
+
+                    {cargando && (
+                        <div className="flex justify-center mt-4">
+                            <Spinner className="mr-4" color="blue-500" size="40px" />
+                        </div>
+                    )}
                 </>
             ) : (
-                // Mostrar el ticket después de finalizar la venta
-                <Ticket 
-                idDTE={dteId} />
+                <Ticket idDTE={dteId} />
             )}
         </Dialog>
     );
