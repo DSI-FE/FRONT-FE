@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import BaseDataTable from './BaseDataTable';
-import { useDispatch } from 'react-redux';
-import { HiEye, HiPencil, HiTrash } from 'react-icons/hi';
+import { HiTrash, HiEye } from 'react-icons/hi';
+import { TbFileDownload } from "react-icons/tb";
 import { CgAdd } from 'react-icons/cg';
-import { Button } from "components/ui";
+import { Button, Notification, toast } from "components/ui";
 import { apiGetVentas } from 'services/VentasService';
+import VentasEdit from './VentasEdit';
 import VentasAdd from './VentasAdd';
 import VentasDialogDelete from './VentasDialogDelete';
 import { apiDeleteVenta } from 'services/VentasService';
+import VentasDialogDelete from './VentasDialogDelete';
+
 
 const VentasList = () => {
-  const [ventasList, setVentasList] = useState([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
-  const [selectedVenta, setSelectedVenta] = useState(null); 
+  const [ventaList, setVentaList] = useState([]);
+  //const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedVenta, setSelectedVenta] = useState(null);
   const [showList, setShowList] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -37,50 +42,74 @@ const VentasList = () => {
       // window.location.reload(); esto lo vamos a cambiar por un dispatch porque no es reactivo
     }
   };
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    const fetchVenta = async () => {
+      const ventaResponse = await apiGetVentas();
+      setVentaList(ventaResponse.data);
+
+
+      /* Esto es solo mientras tanto, aqui va ir la factura */
+
+
+    };
+    fetchVenta();
+  }, []);
 
   const BotonesOpcion = ({ row }) => {
-    const dispatch = useDispatch();
 
-    const onView = () => {
-      setSelectedVenta(row); 
+    const onEdit = () => {
+      setSelectedVenta(row);  // Guardar la venta seleccionada
+      setEditMode(true);  // Activar el modo de edición
+      setShowList(false);
+    };
+
+    const onDelete = () => {
+      setSelectedVenta(row);
       setDeleteDialogOpen(true);
     };
 
-    const onEdit = () => {
+    const descargarFactura = () => {
+  
 
-    }
+    };
 
-    const onDelete = () => {
-      setSelectedVenta(row); 
-      setShowConfirmation(true);
-    }
 
     return (
       <div className='flex justify-center text-center space-x-4'>
-        <Button className='bg-green-500 hover:bg-green-400 active:bg-green-700'
-          title='Ver detalles'
-          size="xs"
-          variant="solid"
-          icon={<HiEye />}
-          onClick={onView}
-        />
-        <Button
-          title='Editar datos'
-          size="xs"
-          variant="solid"
-          icon={<HiPencil />}
-          onClick={onEdit}
-        />
-        <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
-          title='Eliminar datos'
-          size="xs"
-          variant="solid"
-          icon={<HiTrash />}
-          onClick={onDelete}
-        />
+        {row.estado === 'Finalizada' ? (
+          <>
+            <Button className='bg-green-500 hover:bg-green-400 active:bg-green-700'
+              title='Descargar factura'
+              size="xs"
+              variant="solid"
+              icon={<TbFileDownload />}
+              onClick={descargarFactura}
+            />
+          </>
+        ) : (
+          <>
+            <Button
+              title='Ver pedido'
+              size="xs"
+              variant="solid"
+              icon={<HiEye />}
+              onClick={onEdit}
+            />
+            <Button className='bg-red-500 hover:bg-red-400 active:bg-red-700'
+              title='Eliminar datos'
+              size="xs"
+              variant="solid"
+              icon={<HiTrash />}
+              onClick={onDelete}
+            />
+          </>
+        )}
       </div>
     );
-  }
+  };
+
 
   const columns = [
     {
@@ -89,43 +118,33 @@ const VentasList = () => {
       sortable: true,
     },
     {
-      header: 'total_no_sujetas',
-      accessorKey: 'total_no_sujetas', 
+      header: 'Fecha',
+      accessorKey: 'fecha',
+      sortable: true,
+    }
+    ,
+    {
+      header: 'documento',
+      accessorKey: 'tipo_documento.nombre',
       sortable: true,
     },
     {
-      header: 'total_exentas',
-      accessorKey: 'total_exentas', 
+      header: 'Cliente',
+      accessorKey: 'cliente_nombre',
       sortable: true,
     },
     {
-      header: 'total_gravadas',
-      accessorKey: 'total_gravadas', 
+      header: 'Total a pagar',
+      accessorKey: 'total_pagar',
       sortable: true,
-    },
-    {
-      header: 'total_iva',
-      accessorKey: 'total_iva', 
-      sortable: true,
-    },
-    {
-      header: 'total_pagar',
-      accessorKey: 'total_pagar', 
-      sortable: true,
+      cell: props => {
+        const total = parseFloat(props.getValue());
+        return "$ " + total.toFixed(2);
+      },
     },
     {
       header: 'estado',
-      accessorKey: 'estado', 
-      sortable: true,
-    },
-    {
-      header: 'tipo_documento',
-      accessorKey: 'tipo_documento', 
-      sortable: true,
-    },
-    {
-      header: 'cliente_id',
-      accessorKey: 'cliente_id', 
+      accessorKey: 'estado',
       sortable: true,
     },
     {
@@ -139,16 +158,28 @@ const VentasList = () => {
       cellClassName: 'text-center',
     }
   ];
-  
+
+
+  const handleDeleteSuccess = (id) => {
+    setVentaList(ventaList.filter(venta => venta.id !== id));
+    const toastNotification = (
+      <Notification title="Completado" type="success">
+        La venta se eliminó exitosamente.
+      </Notification>
+    );
+    toast.push(toastNotification);
+  };
+
   const toggleView = () => {
     setShowList(!showList);
+    setEditMode(false);
   };
 
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center ">
         <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
-          {showList ? "Lista de ventas" : "Agregar nueva venta"}
+          {showList && !editMode ? "Lista de ventas" : editMode ? "Detallles de la venta" : "Agregar nueva venta"}
         </h2>
         <div>
           <Button
@@ -158,28 +189,40 @@ const VentasList = () => {
             variant="solid"
             className="flex items-center mr-2"
           >
-            {showList ? "Agregar nueva venta" : "Listar ventas"}
+            {showList && !editMode ? "Agregar nueva venta" : "Listar ventas"}
           </Button>
         </div>
       </div>
-      
+
       <div>
-        {showList ? (
+        {showList && !editMode ? (
           <BaseDataTable columns={columns} reqUrl={'/ventas/ventas'} />
+        ) : editMode ? (
+          <VentasEdit
+            venta={selectedVenta}
+            ventaId={selectedVenta.id}
+          /> // Mostrar el formulario de edición
         ) : (
           <VentasAdd />
         )}
       </div>
-      
+
       {selectedVenta && (
-        <VentasDialogDelete
-          isOpen={showConfirmation}
-          onClose={() => setShowConfirmation(false)}
-          client={selectedVenta}
-          onDeleteComplete={handleDeleteComplete}
-        />
+        <>
+          <VentasDialog
+            isOpen={viewDialogOpen}
+            onClose={() => setViewDialogOpen(false)}
+            venta={selectedVenta}
+          />
+
+          <VentasDialogDelete
+            isOpen={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            venta={selectedVenta}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        </>
       )}
-      
     </>
   );
 };

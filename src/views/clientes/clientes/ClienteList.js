@@ -9,6 +9,7 @@ import ClienteDrawer from './ClienteDrawer';
 import DeleteDialog from './components/DeleteDialog/DeleteDialog';
 import ClienteDialog from './ClienteDialog'; 
 
+
 const ClienteList = () => {
   const [clientesList, setClientesList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -26,6 +27,10 @@ const ClienteList = () => {
     fetchClientes();
   }, []);
 
+  const onDelete = (client) => {
+    setSelectedClient(client);
+    setShowConfirmation(true);
+  };
 
   const handleDeleteComplete = async () => {
     try {
@@ -81,7 +86,7 @@ const ClienteList = () => {
           size="xs"
           variant="solid"
           icon={<HiTrash />}
-          onClick={onDelete}
+          onClick={() => onDelete(row)}
         />
       </div>
     );

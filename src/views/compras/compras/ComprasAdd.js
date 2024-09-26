@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Table, Card, Select, Notification, toast } from "components/ui";
 import ProductoDialog from './ProductoDialog';
-import { apiGetProveedores } from 'services/ProveedorService';
 import { HiTrash } from 'react-icons/hi';
 import { apiCreateCompra } from 'services/ComprasService';
+import { apiGetListaProveedores } from 'services/DTEServices';
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
@@ -31,7 +31,7 @@ const ComprasAdd = () => {
     useEffect(() => {
         const fetchProveedores = async () => {
             try {
-                const response = await apiGetProveedores();
+                const response = await apiGetListaProveedores();
                 if (response.data && Array.isArray(response.data.data)) {
                     setListaProveedor(response.data.data);
                 } else {

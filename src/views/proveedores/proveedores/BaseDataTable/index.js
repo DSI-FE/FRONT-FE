@@ -14,6 +14,7 @@ injectReducer('dataProveedores', reducer);
 
 const BaseDataTable = forwardRef((props, ref) => {
 	const { columns, reqUrl } = props;
+	//const tableRef = useRef(null);
 
 	const dispatch = useDispatch();
 
