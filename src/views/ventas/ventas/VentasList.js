@@ -4,7 +4,7 @@ import { HiTrash, HiEye } from 'react-icons/hi';
 import { TbFileDownload } from "react-icons/tb";
 import { CgAdd } from 'react-icons/cg';
 import { Button, Notification, toast } from "components/ui";
-import { apiGetVentas } from 'services/VentasService';
+import { apiGetVentas, apiDownloadFactura } from 'services/VentasService';
 import VentasEdit from './VentasEdit';
 import VentasAdd from './VentasAdd';
 import VentasDialog from './VentasDialog';
@@ -46,12 +46,18 @@ const VentasList = () => {
       setDeleteDialogOpen(true);
     };
 
-    const descargarFactura = () => {
-  
-
+    const handleDownloadFactura = async (id) => {
+      try {
+        const response = await apiDownloadFactura(id);
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
+      } catch (error) {
+        console.error('Error al visualizar la factura:', error.response ? error.response : error.message);
+        console.log(error)
+      }
     };
-
-
+    
     return (
       <div className='flex justify-center text-center space-x-4'>
         {row.estado === 'Finalizada' ? (
@@ -61,7 +67,7 @@ const VentasList = () => {
               size="xs"
               variant="solid"
               icon={<TbFileDownload />}
-              onClick={descargarFactura}
+              onClick={() => handleDownloadFactura(row.id)}
             />
           </>
         ) : (

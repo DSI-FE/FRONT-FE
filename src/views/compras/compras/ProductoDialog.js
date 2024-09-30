@@ -19,7 +19,36 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
 
     const handleProductoChange = (e) => {
         const { name, value } = e.target;
-        setProducto({ ...producto, [name]: value });
+        setProducto(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        console.log("PRODUCTO CAMBIO", name);
+
+        if (name === 'codigo') {
+            const numero = parseInt(value);
+
+            // Buscar el producto correspondiente al código ingresado
+            const productoBuscado = listaProductos.find(producto => producto.id === numero);
+    
+            if (productoBuscado) {
+                // Actualizar los datos del producto si se encuentra
+                setProducto(prevState => ({
+                    ...prevState,
+                    descripcion: productoBuscado.nombreProducto,
+                    codigo: productoBuscado.id
+                }));
+                setUnidadesDisponibles(productoBuscado.unidades);
+            } else {
+                // Restablecer campos si no se encuentra el producto
+                setProducto(prevState => ({
+                    ...prevState,
+                    descripcion: ''
+                }));
+                setUnidadesDisponibles([]);
+            }        
+        }
     };
 
     const totalIva = (producto.precioUnitario * 0.13).toFixed(2);
@@ -116,11 +145,10 @@ const ProductoDialog = ({ isOpen, onClose, onSave }) => {
                 <div>
                     <label>Código</label>
                     <Input
-                        type="text"
+                        type="number"
                         name="codigo"
                         value={producto.codigo}
                         onChange={handleProductoChange}
-                        disabled
                         className="border-gray-300"
                     />
                 </div>

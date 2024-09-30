@@ -57,7 +57,7 @@ const ClienteList = () => {
     const onEdit = () => {
       setSelectedCliente(row);
       setIsDrawerOpen(true);
-      console.log(selectedCliente);
+      //console.log(selectedCliente);
     };
 
     const onDelete = () => {
