@@ -54,6 +54,7 @@ const VentasList = () => {
         window.open(url);
       } catch (error) {
         console.error('Error al visualizar la factura:', error.response ? error.response : error.message);
+        console.log(error)
       }
     };
     

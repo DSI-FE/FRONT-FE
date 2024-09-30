@@ -47,7 +47,34 @@ const ComprasAdd = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setCompra({ ...compra, [name]: value });
+        setCompra(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        console.log("PROVEEDOR CAMBIO", name);
+
+        if (name === 'codigoProveedor') {
+            const numero = parseInt(value);
+            const proveedorBuscado = listaProveedor.find(proveedor => proveedor.id === numero);
+
+            console.log("PROVEEDOR CODIGO", proveedorBuscado);
+
+            if (proveedorBuscado) {
+                setCompra(prevState => ({
+                    ...prevState,
+                    codigoProveedor: proveedorBuscado.id,
+                    nombreProveedor: proveedorBuscado.nombre,
+                    nrcProveedor: proveedorBuscado.nrc
+                }));
+            } else {
+                setCompra(prevState => ({
+                    ...prevState,
+                    nombreProveedor: '',
+                    nrcProveedor: ''
+                }));
+            }
+        }
     };
 
     const agregarProducto = (nuevoProducto) => {
@@ -176,10 +203,10 @@ const ComprasAdd = () => {
                     <div>
                         <label>Código</label>
                         <Input
-                            type="text"
+                            type="number"
                             name="codigoProveedor"
                             value={compra.codigoProveedor}
-                            readOnly
+                            onChange={handleInputChange}
                         />
                     </div>
                     <div>

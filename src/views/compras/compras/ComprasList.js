@@ -7,33 +7,38 @@ import { Button } from "components/ui";
 import { apiGetCompras } from 'services/ComprasService';
 import ComprasDrawer from './ComprasDrawer';
 import ComprasDrawerEdit from './ComprasDrawerEdit';
-import ComprasDialog from './ComprasDialog'; 
+import ComprasDialog from './ComprasDialog';
 import ComprasDialogDelete from './ComprasDialogDelete';
-import ComprasAdd from './ComprasAdd'; 
+import ComprasAdd from './ComprasAdd';
+import ComprasEdit from './ComprasEdit';
 
 const ComprasList = () => {
   const [comprasList, setComprasList] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); 
-  const [selectedCompra, setSelectedCompra] = useState(null); 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedCompra, setSelectedCompra] = useState(null);
   const [showList, setShowList] = useState(true);
+  const [editMode, setEditMode] = useState(false);
 
   const BotonesOpcion = ({ row }) => {
     const dispatch = useDispatch();
 
     const onView = () => {
-      setSelectedCompra(row); 
-      setViewDialogOpen(true); 
+      setSelectedCompra(row);
+      setViewDialogOpen(true);
     };
 
     const onEdit = () => {
-
+      setSelectedCompra(row);  // Guardar la venta seleccionada
+      setEditMode(true);  // Activar el modo de edición
+      setShowList(false);
     }
 
     const onDelete = () => {
-
+      setSelectedCompra(row);
+      setDeleteDialogOpen(true);
     }
 
     return (
@@ -71,22 +76,22 @@ const ComprasList = () => {
     },
     {
       header: 'Fecha',
-      accessorKey: 'fecha', 
+      accessorKey: 'fecha',
       sortable: true,
     },
     {
       header: 'Numero',
-      accessorKey: 'numeroCCF', 
+      accessorKey: 'numeroCCF',
       sortable: true,
     },
     {
       header: 'Proveedor',
-      accessorKey: 'proveedor_nombre', 
+      accessorKey: 'proveedor_nombre',
       sortable: true,
     },
     {
       header: 'Total',
-      accessorKey: 'totalCompra', 
+      accessorKey: 'totalCompra',
       sortable: true,
     },
     {
@@ -100,7 +105,7 @@ const ComprasList = () => {
       cellClassName: 'text-center',
     }
   ];
-  
+
   const openDrawer = () => {
 
   };
@@ -111,13 +116,16 @@ const ComprasList = () => {
 
   const toggleView = () => {
     setShowList(!showList);
+    setEditMode(false); 
   };
+
 
   return (
     <>
       <div className="flex justify-between items-center">
         <h2 style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
-          {showList ? "Lista de compras" : "Agregar nueva compra"}
+          {showList && !editMode ? "Lista de compras" : editMode ? "Editar compra" : "Agregar nueva compra"}
+
         </h2>
         <div>
           <Button
@@ -127,25 +135,35 @@ const ComprasList = () => {
             variant="solid"
             className="flex items-center mr-2"
           >
-            {showList ? "Agregar nueva compra" : "Listar compras"}
+            {showList && !editMode ? "Agregar nueva compra" : "Listar compras"}
           </Button>
         </div>
       </div>
-      
+
       <div>
-        {showList ? (
+        {showList && !editMode ? (
           <BaseDataTable columns={columns} reqUrl={'/compras/compras'} />
+        ) : editMode ? (
+          <ComprasEdit
+            compraSelected={selectedCompra}
+          /> // Mostrar el formulario de edición
         ) : (
           <ComprasAdd />
         )}
       </div>
-      
+
       {selectedCompra && (
         <>
           <ComprasDialog
             isOpen={viewDialogOpen}
             onClose={() => setViewDialogOpen(false)}
             compra={selectedCompra}
+          />
+          <ComprasDialogDelete
+            isOpen={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            compra={selectedCompra}
+            onDeleteSuccess={handleDeleteSuccess}
           />
         </>
       )}

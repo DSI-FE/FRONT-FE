@@ -16,6 +16,7 @@ const ProductosDrawerEdit = ({ isOpen, setIsOpen, productoId }) => {
             try {
                 const response = await apiGetProductosById(id);
                 const producto = response.data.data[0];
+                console.log("Producto: ", id);
                 // Verifica la estructura de la respuesta
                     setFormData({
                         nombreProducto: producto.nombre_producto || '',

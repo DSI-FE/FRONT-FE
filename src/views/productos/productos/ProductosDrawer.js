@@ -18,7 +18,7 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
         } else {
             setNombre('');
             setUnidad(null);
-            setEquivalencia('');
+            setEquivalencia(1);
         }
     }, [drawerOpen, formType]);
 
@@ -94,7 +94,7 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
                 </Notification>
             );
             toast.push(toastNotification);
-            onDrawerClose();
+           // onDrawerClose();
             clearFields();
         } catch (error) {
             const errorNotification = (
@@ -108,7 +108,7 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
     };
 
     const clearFields = () => {
-        setNombre('');
+//        setNombre('');
         setUnidad(null);
         setEquivalencia('');
     };
@@ -168,6 +168,7 @@ const ProductosDrawer = ({ isOpen, setIsOpen, drawerOpen, formType, eventSent })
                     <div className="mt-0 mb-4">
                         <label htmlFor="serie" className="mb-4">Equivalencia:</label>
                         <Input
+                            type="number"
                             id="serie"
                             value={equivalencia}
                             onChange={(e) => setEquivalencia(e.target.value)}

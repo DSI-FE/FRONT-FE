@@ -147,9 +147,9 @@ useEffect(() => {
                 </tbody>
             </table>
             <hr />
-            <p style={{textAlign: 'right'}}>Total gravadas: ${dataDTE.totalPagar.toFixed(2)}</p>
+            <p style={{textAlign: 'right'}}>Total gravadas: ${dataDTE.totalPagar}</p>
             <p style={{textAlign: 'right'}}>Total exentas: ${dataDTE.totalExentas}</p>
-            <p style={{textAlign: 'right'}}><strong>Total a pagar: ${dataDTE.totalPagar.toFixed(2)}</strong></p>
+            <p style={{textAlign: 'right'}}><strong>Total a pagar: ${dataDTE.totalPagar}</strong></p>
             <hr /><br/><br/>
             <p style={{ textAlign: 'center' }}>**** GRACIAS POR SU COMPRA ****</p>
             <p style={{ textAlign: 'center' }}>LO ESPERAMOS PRONTO</p>
