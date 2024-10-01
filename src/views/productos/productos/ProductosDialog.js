@@ -7,13 +7,14 @@ const ProductosDialog = ({ isOpen, onClose, producto }) => {
     const [detalleProducto, setDetalleProducto] = useState(null);
 
     // Asegúrate de que `producto` tiene un ID y asigna ese ID a una variable
-    const productoId = producto?.producto_id;
+    const productoId = producto?.id;
 
     useEffect(() => {
         const fetchProductoDetalles = async (id) => {
             try {
                 const response = await apiGetProductosBy(id);
                 setDetalleProducto(response.data);
+                console.log("data", response.data)
             } catch (error) {
                 console.error("Error fetching detalle de producto:", error);
             }
